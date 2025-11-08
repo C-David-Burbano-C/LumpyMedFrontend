@@ -1,0 +1,112 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-500 to-primary-700 px-4 py-12">
+  <div class="w-full max-w-md">
+    <mat-card class="!shadow-2xl">
+      <mat-card-header class="flex flex-col items-center mb-6">
+        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+          </svg>
+        </div>
+        <mat-card-title class="!text-2xl !font-bold !text-center !text-gray-800">
+          {{ 'AUTH.REGISTER' | translate }}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          <div class="space-y-4">
+            <mat-form-field class="w-full" appearance="outline">
+              <mat-label>{{ 'AUTH.USERNAME' | translate }}</mat-label>
+              <input matInput formControlName="username" type="text" autocomplete="username">
+              <mat-error *ngIf="f['username'].errors?.['required']">
+                {{ 'VALIDATION.REQUIRED' | translate }}
+              </mat-error>
+              <mat-error *ngIf="f['username'].errors?.['minlength']">
+                {{ 'VALIDATION.MIN_LENGTH' | translate: {value: 3} }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-full" appearance="outline">
+              <mat-label>{{ 'AUTH.EMAIL' | translate }}</mat-label>
+              <input matInput formControlName="email" type="email" autocomplete="email">
+              <mat-error *ngIf="f['email'].errors?.['required']">
+                {{ 'VALIDATION.REQUIRED' | translate }}
+              </mat-error>
+              <mat-error *ngIf="f['email'].errors?.['email']">
+                {{ 'VALIDATION.EMAIL' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-full" appearance="outline">
+              <mat-label>{{ 'AUTH.PASSWORD' | translate }}</mat-label>
+              <input matInput formControlName="password" type="password" autocomplete="new-password">
+              <mat-error *ngIf="f['password'].errors?.['required']">
+                {{ 'VALIDATION.REQUIRED' | translate }}
+              </mat-error>
+              <mat-error *ngIf="f['password'].errors?.['minlength']">
+                {{ 'VALIDATION.MIN_LENGTH' | translate: {value: 6} }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-full" appearance="outline">
+              <mat-label>{{ 'AUTH.CONFIRM_PASSWORD' | translate }}</mat-label>
+              <input matInput formControlName="confirmPassword" type="password" autocomplete="new-password">
+              <mat-error *ngIf="f['confirmPassword'].errors?.['required']">
+                {{ 'VALIDATION.REQUIRED' | translate }}
+              </mat-error>
+              <mat-error *ngIf="registerForm.errors?.['passwordMismatch'] && f['confirmPassword'].touched">
+                {{ 'ERRORS.PASSWORD_MISMATCH' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-full" appearance="outline">
+              <mat-label>{{ 'AUTH.ROLE' | translate }}</mat-label>
+              <mat-select formControlName="rol">
+                <mat-option *ngFor="let role of roles" [value]="role.value">
+                  {{ role.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div *ngIf="errorMessage" class="alert-danger">
+              <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span>{{ errorMessage }}</span>
+              </div>
+            </div>
+
+            <div *ngIf="successMessage" class="alert-success">
+              <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                </svg>
+                <span>{{ successMessage }}</span>
+              </div>
+            </div>
+
+            <button mat-raised-button color="primary" type="submit" 
+                    class="w-full !py-3 !text-base" 
+                    [disabled]="loading || registerForm.invalid">
+              <span *ngIf="!loading">{{ 'AUTH.REGISTER' | translate }}</span>
+              <span *ngIf="loading" class="flex items-center justify-center">
+                <span class="spinner mr-2"></span>
+                {{ 'COMMON.LOADING' | translate }}
+              </span>
+            </button>
+          </div>
+        </form>
+
+        <div class="mt-6 text-center">
+          <p class="text-gray-600">
+            ¿Ya tienes cuenta?
+            <a routerLink="/login" class="text-primary-600 hover:text-primary-700 font-medium ml-1">
+              {{ 'AUTH.LOGIN' | translate }}
+            </a>
+          </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
