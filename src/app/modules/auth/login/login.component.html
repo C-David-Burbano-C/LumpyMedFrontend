@@ -1,0 +1,66 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-500 to-primary-700 px-4 py-12">
+  <div class="w-full max-w-md">
+    <mat-card class="!shadow-2xl">
+      <mat-card-header class="flex flex-col items-center mb-6">
+        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+          </svg>
+        </div>
+        <mat-card-title class="!text-2xl !font-bold !text-center !text-gray-800">
+          {{ 'APP.TITLE' | translate }}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="space-y-4">
+            <mat-form-field class="w-full" appearance="outline">
+              <mat-label>{{ 'AUTH.USERNAME' | translate }}</mat-label>
+              <input matInput formControlName="username" type="text" autocomplete="username">
+              <mat-error *ngIf="f['username'].errors?.['required']">
+                {{ 'VALIDATION.REQUIRED' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-full" appearance="outline">
+              <mat-label>{{ 'AUTH.PASSWORD' | translate }}</mat-label>
+              <input matInput formControlName="password" type="password" autocomplete="current-password">
+              <mat-error *ngIf="f['password'].errors?.['required']">
+                {{ 'VALIDATION.REQUIRED' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+            <div *ngIf="errorMessage" class="alert-danger">
+              <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                </svg>
+                <span>{{ errorMessage }}</span>
+              </div>
+            </div>
+
+            <button mat-raised-button color="primary" type="submit" 
+                    class="w-full !py-3 !text-base" 
+                    [disabled]="loading || loginForm.invalid">
+              <span *ngIf="!loading">{{ 'AUTH.LOGIN' | translate }}</span>
+              <span *ngIf="loading" class="flex items-center justify-center">
+                <span class="spinner mr-2"></span>
+                {{ 'COMMON.LOADING' | translate }}
+              </span>
+            </button>
+          </div>
+        </form>
+
+        <div class="mt-6 text-center">
+          <p class="text-gray-600">
+            ¿No tienes cuenta?
+            <a routerLink="/login/register" class="text-primary-600 hover:text-primary-700 font-medium ml-1">
+              {{ 'AUTH.REGISTER' | translate }}
+            </a>
+          </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
