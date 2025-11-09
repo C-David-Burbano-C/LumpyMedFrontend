@@ -1,0 +1,170 @@
+<div class="min-h-screen bg-gray-50">
+  <mat-toolbar color="primary" class="shadow-md">
+    <div class="container-app flex justify-between items-center">
+      <div class="flex items-center">
+        <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+        </svg>
+        <span class="text-xl font-bold">{{ 'CALCULATOR.TITLE' | translate }}</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-sm">{{ currentUser?.username }}</span>
+        <button mat-button (click)="logout()" class="!text-white">
+          <mat-icon>logout</mat-icon>
+          {{ 'AUTH.LOGOUT' | translate }}
+        </button>
+        <button mat-button routerLink="/medicines" *ngIf="currentUser?.rol === 'ADMIN'" class="!text-white">
+          <mat-icon>medication</mat-icon>
+          Medicamentos
+        </button>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <div class="container-app py-8">
+    <div class="max-w-4xl mx-auto">
+      <mat-card class="!shadow-lg mb-6">
+        <mat-card-header class="mb-4">
+          <mat-card-title class="!text-2xl !font-bold !text-gray-800">
+            {{ 'CALCULATOR.TITLE' | translate }}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <form [formGroup]="calculatorForm" (ngSubmit)="onSubmit()">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <mat-form-field class="w-full" appearance="outline">
+                <mat-label>{{ 'CALCULATOR.MEDICINE' | translate }}</mat-label>
+                <input matInput 
+                       formControlName="medicineName" 
+                       [matAutocomplete]="auto"
+                       placeholder="{{ 'CALCULATOR.SELECT_MEDICINE' | translate }}">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayMedicine">
+                  <mat-option *ngFor="let medicine of filteredMedicines | async" [value]="medicine">
+                    {{ medicine.name }}
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="calculatorForm.get('medicineName')?.errors?.['required']">
+                  {{ 'VALIDATION.REQUIRED' | translate }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="w-full" appearance="outline">
+                <mat-label>{{ 'CALCULATOR.WEIGHT' | translate }}</mat-label>
+                <input matInput formControlName="weightKg" type="number" step="0.1">
+                <mat-error *ngIf="calculatorForm.get('weightKg')?.errors?.['required']">
+                  {{ 'VALIDATION.REQUIRED' | translate }}
+                </mat-error>
+                <mat-error *ngIf="calculatorForm.get('weightKg')?.errors?.['min']">
+                  {{ 'VALIDATION.MIN' | translate: {value: 0.1} }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field class="w-full" appearance="outline">
+                <mat-label>{{ 'CALCULATOR.CONCENTRATION_MG' | translate }} (opcional)</mat-label>
+                <input matInput formControlName="userConcentrationMg" type="number" step="0.1">
+              </mat-form-field>
+
+              <mat-form-field class="w-full" appearance="outline">
+                <mat-label>{{ 'CALCULATOR.CONCENTRATION_ML' | translate }} (opcional)</mat-label>
+                <input matInput formControlName="userConcentrationMl" type="number" step="0.1">
+              </mat-form-field>
+            </div>
+
+            <div *ngIf="errorMessage" class="alert-danger mt-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                  </svg>
+                  <span>{{ errorMessage }}</span>
+                </div>
+                <button mat-button color="warn" (click)="retry()" type="button">
+                  {{ 'CALCULATOR.RETRY' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+              <button mat-raised-button color="primary" type="submit" 
+                      class="!px-8 !py-2"
+                      [disabled]="calculating || calculatorForm.invalid">
+                <span *ngIf="!calculating">{{ 'CALCULATOR.CALCULATE' | translate }}</span>
+                <span *ngIf="calculating" class="flex items-center">
+                  <span class="spinner mr-2"></span>
+                  {{ 'COMMON.LOADING' | translate }}
+                </span>
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card *ngIf="doseResult" class="!shadow-lg fade-in" 
+                [ngClass]="{'!border-l-4 !border-success-500': isResultSafe(), '!border-l-4 !border-danger-500': !isResultSafe()}">
+        <mat-card-header class="mb-4">
+          <mat-card-title class="!text-xl !font-bold !text-gray-800">
+            {{ 'CALCULATOR.RESULTS' | translate }}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <p class="text-sm text-gray-600 mb-1">Medicamento</p>
+              <p class="text-lg font-semibold text-gray-800">{{ doseResult.medicine }}</p>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <p class="text-sm text-gray-600 mb-1">Peso del niño</p>
+              <p class="text-lg font-semibold text-gray-800">{{ doseResult.weightKg }} kg</p>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <p class="text-sm text-gray-600 mb-1">{{ 'CALCULATOR.TOTAL_DAILY_DOSE' | translate }}</p>
+              <p class="text-lg font-semibold text-gray-800">{{ doseResult.mgPerDay }} mg/día</p>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <p class="text-sm text-gray-600 mb-1">Dosis por día</p>
+              <p class="text-lg font-semibold text-gray-800">{{ doseResult.dosesPerDay }} tomas</p>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <p class="text-sm text-gray-600 mb-1">{{ 'CALCULATOR.DOSE_PER_INTAKE' | translate }}</p>
+              <p class="text-lg font-semibold text-gray-800">{{ doseResult.mgPerDose }} mg</p>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <p class="text-sm text-gray-600 mb-1">{{ 'CALCULATOR.AMOUNT_ML' | translate }}</p>
+              <p class="text-lg font-semibold text-gray-800">{{ doseResult.mlPerDose }} ml</p>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded-lg md:col-span-2">
+              <p class="text-sm text-gray-600 mb-1">{{ 'CALCULATOR.SAFE_RANGE' | translate }}</p>
+              <p class="text-lg font-semibold text-gray-800">{{ doseResult.safeRange }}</p>
+            </div>
+          </div>
+
+          <div class="mt-6 p-4 rounded-lg flex items-center"
+               [ngClass]="{'bg-success-50 border border-success-200': isResultSafe(), 'bg-danger-50 border border-danger-200': !isResultSafe()}">
+            <svg class="w-8 h-8 mr-3" 
+                 [ngClass]="{'text-success-600': isResultSafe(), 'text-danger-600': !isResultSafe()}"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path *ngIf="isResultSafe()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              <path *ngIf="!isResultSafe()" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <div>
+              <p class="font-semibold text-lg"
+                 [ngClass]="{'text-success-800': isResultSafe(), 'text-danger-800': !isResultSafe()}">
+                {{ doseResult.alert }}
+              </p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
