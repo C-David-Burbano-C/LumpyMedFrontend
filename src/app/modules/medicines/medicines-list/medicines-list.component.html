@@ -1,0 +1,96 @@
+<div class="min-h-screen bg-gray-50">
+  <mat-toolbar color="primary" class="shadow-md">
+    <div class="container-app flex justify-between items-center">
+      <div class="flex items-center">
+        <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"></path>
+        </svg>
+        <span class="text-xl font-bold">{{ 'MEDICINES.TITLE' | translate }}</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <button mat-button routerLink="/calculator" class="!text-white">
+          <mat-icon>calculate</mat-icon>
+          Calculadora
+        </button>
+        <button mat-button (click)="logout()" class="!text-white">
+          <mat-icon>logout</mat-icon>
+          {{ 'AUTH.LOGOUT' | translate }}
+        </button>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <div class="container-app py-8">
+    <mat-card class="!shadow-lg">
+      <mat-card-header class="mb-4 flex justify-between items-center">
+        <mat-card-title class="!text-2xl !font-bold !text-gray-800">
+          {{ 'MEDICINES.LIST' | translate }}
+        </mat-card-title>
+        <button mat-raised-button color="primary" (click)="openAddDialog()">
+          <mat-icon>add</mat-icon>
+          {{ 'MEDICINES.ADD' | translate }}
+        </button>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div *ngIf="errorMessage" class="alert-danger mb-4">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+            </svg>
+            <span>{{ errorMessage }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="loading" class="flex justify-center items-center py-8">
+          <div class="spinner"></div>
+        </div>
+
+        <div *ngIf="!loading && medicines.length === 0" class="text-center py-8 text-gray-500">
+          {{ 'COMMON.NO_DATA' | translate }}
+        </div>
+
+        <div *ngIf="!loading && medicines.length > 0" class="overflow-x-auto">
+          <table mat-table [dataSource]="medicines" class="w-full">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef class="!font-bold">{{ 'MEDICINES.NAME' | translate }}</th>
+              <td mat-cell *matCellDef="let medicine">{{ medicine.name }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef class="!font-bold">{{ 'MEDICINES.DESCRIPTION' | translate }}</th>
+              <td mat-cell *matCellDef="let medicine">{{ medicine.description }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="mgKgDay">
+              <th mat-header-cell *matHeaderCellDef class="!font-bold">{{ 'MEDICINES.MG_KG_DAY' | translate }}</th>
+              <td mat-cell *matCellDef="let medicine">{{ medicine.mgKgDay }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="dosesPerDay">
+              <th mat-header-cell *matHeaderCellDef class="!font-bold">{{ 'MEDICINES.DOSES_PER_DAY' | translate }}</th>
+              <td mat-cell *matCellDef="let medicine">{{ medicine.dosesPerDay }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="!font-bold">{{ 'COMMON.ACTIONS' | translate }}</th>
+              <td mat-cell *matCellDef="let medicine">
+                <button mat-icon-button color="primary" (click)="openEditDialog(medicine)" 
+                        [matTooltip]="'COMMON.EDIT' | translate">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteMedicine(medicine)"
+                        [matTooltip]="'COMMON.DELETE' | translate">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
