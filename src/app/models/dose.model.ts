@@ -1,3 +1,5 @@
+import { Medicine } from './medicine.model';
+
 export interface DoseRequest {
   medicineName: string;
   weightKg: number;
@@ -6,7 +8,7 @@ export interface DoseRequest {
 }
 
 export interface DoseResponse {
-  medicine: string;
+  medicine: Medicine;
   weightKg: number;
   mgPerDay: number;
   dosesPerDay: number;

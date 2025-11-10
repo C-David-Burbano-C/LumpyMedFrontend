@@ -15,7 +15,6 @@ export class MedicinesListComponent implements OnInit {
   medicines: Medicine[] = [];
   loading = false;
   errorMessage = '';
-  displayedColumns: string[] = ['name', 'description', 'mgKgDay', 'dosesPerDay', 'actions'];
 
   constructor(
     private medicinesService: MedicinesService,
@@ -43,10 +42,12 @@ export class MedicinesListComponent implements OnInit {
     });
   }
 
-  openAddDialog(): void {
+  openMedicineForm(medicine?: Medicine): void {
     const dialogRef = this.dialog.open(MedicineFormComponent, {
       width: '600px',
-      data: { medicine: null }
+      maxWidth: '90vw',
+      panelClass: 'modern-dialog',
+      data: { medicine: medicine || null }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -56,17 +57,8 @@ export class MedicinesListComponent implements OnInit {
     });
   }
 
-  openEditDialog(medicine: Medicine): void {
-    const dialogRef = this.dialog.open(MedicineFormComponent, {
-      width: '600px',
-      data: { medicine: { ...medicine } }
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadMedicines();
-      }
-    });
+  editMedicine(medicine: Medicine): void {
+    this.openMedicineForm(medicine);
   }
 
   deleteMedicine(medicine: Medicine): void {

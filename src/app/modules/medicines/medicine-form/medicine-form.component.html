@@ -1,120 +1,210 @@
-<h2 mat-dialog-title class="text-xl font-bold text-gray-800">
-  {{ (isEditMode ? 'MEDICINES.EDIT' : 'MEDICINES.ADD') | translate }}
-</h2>
-
-<mat-dialog-content class="!pt-4">
-  <form [formGroup]="medicineForm">
-    <div class="space-y-4">
-      <mat-form-field class="w-full" appearance="outline">
-        <mat-label>{{ 'MEDICINES.NAME' | translate }}</mat-label>
-        <input matInput formControlName="name" type="text">
-        <mat-error *ngIf="f['name'].errors?.['required']">
-          {{ 'VALIDATION.REQUIRED' | translate }}
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field class="w-full" appearance="outline">
-        <mat-label>{{ 'MEDICINES.DESCRIPTION' | translate }}</mat-label>
-        <textarea matInput formControlName="description" rows="3"></textarea>
-        <mat-error *ngIf="f['description'].errors?.['required']">
-          {{ 'VALIDATION.REQUIRED' | translate }}
-        </mat-error>
-      </mat-form-field>
-
-      <div class="grid grid-cols-2 gap-4">
-        <mat-form-field class="w-full" appearance="outline">
-          <mat-label>{{ 'MEDICINES.MG_KG_DAY' | translate }}</mat-label>
-          <input matInput formControlName="mgKgDay" type="number" step="0.1">
-          <mat-error *ngIf="f['mgKgDay'].errors?.['required']">
-            {{ 'VALIDATION.REQUIRED' | translate }}
-          </mat-error>
-          <mat-error *ngIf="f['mgKgDay'].errors?.['min']">
-            {{ 'VALIDATION.MIN' | translate: {value: 0} }}
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field class="w-full" appearance="outline">
-          <mat-label>{{ 'MEDICINES.DOSES_PER_DAY' | translate }}</mat-label>
-          <input matInput formControlName="dosesPerDay" type="number">
-          <mat-error *ngIf="f['dosesPerDay'].errors?.['required']">
-            {{ 'VALIDATION.REQUIRED' | translate }}
-          </mat-error>
-          <mat-error *ngIf="f['dosesPerDay'].errors?.['min']">
-            {{ 'VALIDATION.MIN' | translate: {value: 1} }}
-          </mat-error>
-        </mat-form-field>
+<div class="bg-dark-bg">
+  <!-- Dialog Header -->
+  <div class="flex items-center justify-between mb-6 pb-4 border-b border-dark-border">
+    <div class="flex items-center space-x-3">
+      <div class="p-2 bg-gradient-to-br from-accent-primary to-accent-purple rounded-lg">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+        </svg>
       </div>
-
-      <div class="grid grid-cols-2 gap-4">
-        <mat-form-field class="w-full" appearance="outline">
-          <mat-label>{{ 'MEDICINES.CONCENTRATION_MG' | translate }}</mat-label>
-          <input matInput formControlName="concentrationMg" type="number" step="0.1">
-          <mat-error *ngIf="f['concentrationMg'].errors?.['required']">
-            {{ 'VALIDATION.REQUIRED' | translate }}
-          </mat-error>
-          <mat-error *ngIf="f['concentrationMg'].errors?.['min']">
-            {{ 'VALIDATION.MIN' | translate: {value: 0} }}
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field class="w-full" appearance="outline">
-          <mat-label>{{ 'MEDICINES.CONCENTRATION_ML' | translate }}</mat-label>
-          <input matInput formControlName="concentrationMl" type="number" step="0.1">
-          <mat-error *ngIf="f['concentrationMl'].errors?.['required']">
-            {{ 'VALIDATION.REQUIRED' | translate }}
-          </mat-error>
-          <mat-error *ngIf="f['concentrationMl'].errors?.['min']">
-            {{ 'VALIDATION.MIN' | translate: {value: 0} }}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <div class="grid grid-cols-2 gap-4">
-        <mat-form-field class="w-full" appearance="outline">
-          <mat-label>{{ 'MEDICINES.MIN_SAFE_ML' | translate }}</mat-label>
-          <input matInput formControlName="minSafeMl" type="number" step="0.1">
-          <mat-error *ngIf="f['minSafeMl'].errors?.['required']">
-            {{ 'VALIDATION.REQUIRED' | translate }}
-          </mat-error>
-          <mat-error *ngIf="f['minSafeMl'].errors?.['min']">
-            {{ 'VALIDATION.MIN' | translate: {value: 0} }}
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field class="w-full" appearance="outline">
-          <mat-label>{{ 'MEDICINES.MAX_SAFE_ML' | translate }}</mat-label>
-          <input matInput formControlName="maxSafeMl" type="number" step="0.1">
-          <mat-error *ngIf="f['maxSafeMl'].errors?.['required']">
-            {{ 'VALIDATION.REQUIRED' | translate }}
-          </mat-error>
-          <mat-error *ngIf="f['maxSafeMl'].errors?.['min']">
-            {{ 'VALIDATION.MIN' | translate: {value: 0} }}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <div *ngIf="errorMessage" class="alert-danger">
-        <div class="flex items-center">
-          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-          </svg>
-          <span>{{ errorMessage }}</span>
-        </div>
+      <div>
+        <h2 class="text-xl font-bold text-text-primary">
+          {{ isEditMode ? ('MEDICINES.EDIT' | translate) : ('MEDICINES.ADD_NEW' | translate) }}
+        </h2>
+        <p class="text-sm text-text-secondary">Complete la información del medicamento</p>
       </div>
     </div>
-  </form>
-</mat-dialog-content>
+    <button mat-dialog-close class="p-2 hover:bg-dark-hover rounded-lg transition-colors">
+      <svg class="w-5 h-5 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
 
-<mat-dialog-actions class="!flex !justify-end !gap-2 !pt-4">
-  <button mat-button (click)="onCancel()" [disabled]="loading">
-    {{ 'COMMON.CANCEL' | translate }}
-  </button>
-  <button mat-raised-button color="primary" (click)="onSubmit()" 
-          [disabled]="loading || medicineForm.invalid">
-    <span *ngIf="!loading">{{ 'COMMON.SAVE' | translate }}</span>
-    <span *ngIf="loading" class="flex items-center">
-      <span class="spinner mr-2"></span>
-      {{ 'COMMON.LOADING' | translate }}
-    </span>
-  </button>
-</mat-dialog-actions>
+  <!-- Form -->
+  <form [formGroup]="medicineForm" (ngSubmit)="onSubmit()" class="space-y-5">
+    <!-- Name -->
+    <div>
+      <label class="block text-sm font-medium text-text-secondary mb-2">
+        {{ 'MEDICINES.NAME' | translate }}
+      </label>
+      <input 
+        type="text" 
+        formControlName="name"
+        class="modern-input"
+        placeholder="Nombre del medicamento"
+      />
+      <p *ngIf="f['name'].errors?.['required'] && f['name'].touched" 
+         class="error-message">
+        {{ 'VALIDATION.REQUIRED' | translate }}
+      </p>
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label class="block text-sm font-medium text-text-secondary mb-2">
+        Descripción
+      </label>
+      <textarea 
+        formControlName="description"
+        rows="2"
+        class="modern-input resize-none"
+        placeholder="Descripción del medicamento"
+      ></textarea>
+      <p *ngIf="f['description'].errors?.['required'] && f['description'].touched" 
+         class="error-message">
+        {{ 'VALIDATION.REQUIRED' | translate }}
+      </p>
+    </div>
+
+    <!-- Dosage Information Row -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-text-secondary mb-2">
+          Dosis (mg/kg/día)
+        </label>
+        <input 
+          type="number" 
+          formControlName="mgKgDay"
+          step="0.01"
+          class="modern-input"
+          placeholder="10.00"
+        />
+        <p *ngIf="f['mgKgDay'].errors?.['required'] && f['mgKgDay'].touched" 
+           class="error-message">
+          {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-text-secondary mb-2">
+          Dosis por día
+        </label>
+        <input 
+          type="number" 
+          formControlName="dosesPerDay"
+          class="modern-input"
+          placeholder="3"
+        />
+        <p *ngIf="f['dosesPerDay'].errors?.['required'] && f['dosesPerDay'].touched" 
+           class="error-message">
+          {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Concentration Row -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-text-secondary mb-2">
+          Concentración (mg)
+        </label>
+        <input 
+          type="number" 
+          formControlName="concentrationMg"
+          step="0.01"
+          class="modern-input"
+          placeholder="100.00"
+        />
+        <p *ngIf="f['concentrationMg'].errors?.['required'] && f['concentrationMg'].touched" 
+           class="error-message">
+          {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-text-secondary mb-2">
+          Volumen (ml)
+        </label>
+        <input 
+          type="number" 
+          formControlName="concentrationMl"
+          step="0.01"
+          class="modern-input"
+          placeholder="5.00"
+        />
+        <p *ngIf="f['concentrationMl'].errors?.['required'] && f['concentrationMl'].touched" 
+           class="error-message">
+          {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Safe Range Row -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-text-secondary mb-2">
+          Mínimo seguro (ml)
+        </label>
+        <input 
+          type="number" 
+          formControlName="minSafeMl"
+          step="0.01"
+          class="modern-input"
+          placeholder="2.00"
+        />
+        <p *ngIf="f['minSafeMl'].errors?.['required'] && f['minSafeMl'].touched" 
+           class="error-message">
+          {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-text-secondary mb-2">
+          Máximo seguro (ml)
+        </label>
+        <input 
+          type="number" 
+          formControlName="maxSafeMl"
+          step="0.01"
+          class="modern-input"
+          placeholder="10.00"
+        />
+        <p *ngIf="f['maxSafeMl'].errors?.['required'] && f['maxSafeMl'].touched" 
+           class="error-message">
+          {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="badge-danger px-4 py-3 rounded-lg">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+        </svg>
+        <span>{{ errorMessage }}</span>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex items-center justify-end space-x-3 pt-4 border-t border-dark-border">
+      <button 
+        type="button" 
+        mat-dialog-close
+        class="modern-btn-secondary"
+      >
+        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+      <button 
+        type="submit" 
+        class="modern-btn-primary"
+        [disabled]="loading || medicineForm.invalid"
+      >
+        <span *ngIf="!loading" class="flex items-center">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          {{ isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.SAVE' | translate) }}
+        </span>
+        <span *ngIf="loading" class="flex items-center">
+          <span class="spinner mr-2"></span>
+          {{ 'COMMON.LOADING' | translate }}
+        </span>
+      </button>
+    </div>
+  </form>
+</div>

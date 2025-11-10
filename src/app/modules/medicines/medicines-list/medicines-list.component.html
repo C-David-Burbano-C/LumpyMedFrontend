@@ -1,96 +1,139 @@
-<div class="min-h-screen bg-gray-50">
-  <mat-toolbar color="primary" class="shadow-md">
-    <div class="container-app flex justify-between items-center">
-      <div class="flex items-center">
-        <svg class="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"></path>
-        </svg>
-        <span class="text-xl font-bold">{{ 'MEDICINES.TITLE' | translate }}</span>
-      </div>
-      <div class="flex items-center gap-4">
-        <button mat-button routerLink="/calculator" class="!text-white">
-          <mat-icon>calculate</mat-icon>
-          Calculadora
-        </button>
-        <button mat-button (click)="logout()" class="!text-white">
-          <mat-icon>logout</mat-icon>
-          {{ 'AUTH.LOGOUT' | translate }}
-        </button>
-      </div>
-    </div>
-  </mat-toolbar>
-
-  <div class="container-app py-8">
-    <mat-card class="!shadow-lg">
-      <mat-card-header class="mb-4 flex justify-between items-center">
-        <mat-card-title class="!text-2xl !font-bold !text-gray-800">
-          {{ 'MEDICINES.LIST' | translate }}
-        </mat-card-title>
-        <button mat-raised-button color="primary" (click)="openAddDialog()">
-          <mat-icon>add</mat-icon>
-          {{ 'MEDICINES.ADD' | translate }}
-        </button>
-      </mat-card-header>
-
-      <mat-card-content>
-        <div *ngIf="errorMessage" class="alert-danger mb-4">
-          <div class="flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+<div class="min-h-screen bg-dark-bg">
+  <!-- Header -->
+  <header class="glass-effect border-b border-dark-border sticky top-0 z-50">
+    <div class="modern-container py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="p-2 bg-accent-purple/10 rounded-lg">
+            <svg class="w-6 h-6 text-accent-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
             </svg>
-            <span>{{ errorMessage }}</span>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-text-primary">{{ 'MEDICINES.TITLE' | translate }}</h1>
+            <p class="text-xs text-text-tertiary">Gestión de medicamentos</p>
           </div>
         </div>
-
-        <div *ngIf="loading" class="flex justify-center items-center py-8">
-          <div class="spinner"></div>
+        <div class="flex items-center space-x-4">
+          <a routerLink="/calculator" class="modern-btn-secondary text-sm px-4 py-2">
+            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+            Calculadora
+          </a>
+          <button (click)="logout()" class="modern-btn-danger text-sm px-4 py-2">
+            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Salir
+          </button>
         </div>
+      </div>
+    </div>
+  </header>
 
-        <div *ngIf="!loading && medicines.length === 0" class="text-center py-8 text-gray-500">
-          {{ 'COMMON.NO_DATA' | translate }}
-        </div>
+  <!-- Main Content -->
+  <main class="modern-container py-8">
+    <!-- Header Actions -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-bold gradient-text">Lista de Medicamentos</h2>
+        <p class="text-text-secondary text-sm mt-1">Administra el catálogo completo</p>
+      </div>
+      <button (click)="openMedicineForm()" class="modern-btn-primary">
+        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        {{ 'MEDICINES.ADD_NEW' | translate }}
+      </button>
+    </div>
 
-        <div *ngIf="!loading && medicines.length > 0" class="overflow-x-auto">
-          <table mat-table [dataSource]="medicines" class="w-full">
-            <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef class="!font-bold">{{ 'MEDICINES.NAME' | translate }}</th>
-              <td mat-cell *matCellDef="let medicine">{{ medicine.name }}</td>
-            </ng-container>
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex justify-center items-center py-20">
+      <div class="text-center">
+        <div class="spinner mx-auto mb-4"></div>
+        <p class="text-text-secondary">{{ 'COMMON.LOADING' | translate }}</p>
+      </div>
+    </div>
 
-            <ng-container matColumnDef="description">
-              <th mat-header-cell *matHeaderCellDef class="!font-bold">{{ 'MEDICINES.DESCRIPTION' | translate }}</th>
-              <td mat-cell *matCellDef="let medicine">{{ medicine.description }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="mgKgDay">
-              <th mat-header-cell *matHeaderCellDef class="!font-bold">{{ 'MEDICINES.MG_KG_DAY' | translate }}</th>
-              <td mat-cell *matCellDef="let medicine">{{ medicine.mgKgDay }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="dosesPerDay">
-              <th mat-header-cell *matHeaderCellDef class="!font-bold">{{ 'MEDICINES.DOSES_PER_DAY' | translate }}</th>
-              <td mat-cell *matCellDef="let medicine">{{ medicine.dosesPerDay }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef class="!font-bold">{{ 'COMMON.ACTIONS' | translate }}</th>
-              <td mat-cell *matCellDef="let medicine">
-                <button mat-icon-button color="primary" (click)="openEditDialog(medicine)" 
-                        [matTooltip]="'COMMON.EDIT' | translate">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" (click)="deleteMedicine(medicine)"
-                        [matTooltip]="'COMMON.DELETE' | translate">
-                  <mat-icon>delete</mat-icon>
-                </button>
+    <!-- Medicines Table -->
+    <div *ngIf="!loading && medicines.length > 0" class="modern-card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>{{ 'MEDICINES.NAME' | translate }}</th>
+              <th>Descripción</th>
+              <th>Dosis (mg/kg/día)</th>
+              <th>Frecuencia</th>
+              <th>Concentración</th>
+              <th>Rango seguro (ml)</th>
+              <th class="text-right">{{ 'COMMON.ACTIONS' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let medicine of medicines" class="group">
+              <td class="font-medium text-text-primary">{{ medicine.name }}</td>
+              <td class="text-text-secondary text-sm">{{ medicine.description }}</td>
+              <td>
+                <span class="badge-primary">
+                  {{ medicine.mgKgDay }} mg/kg/día
+                </span>
               </td>
-            </ng-container>
+              <td>{{ medicine.dosesPerDay }} dosis/día</td>
+              <td>{{ medicine.concentrationMg }}mg / {{ medicine.concentrationMl }}ml</td>
+              <td class="text-sm text-text-secondary">{{ medicine.minSafeMl }} - {{ medicine.maxSafeMl }} ml</td>
+              <td class="text-right">
+                <div class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button 
+                    (click)="editMedicine(medicine)" 
+                    class="p-2 bg-dark-elevated hover:bg-accent-primary/10 border border-dark-border hover:border-accent-primary/30 rounded-lg transition-all"
+                    title="Editar">
+                    <svg class="w-4 h-4 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                  </button>
+                  <button 
+                    (click)="deleteMedicine(medicine)" 
+                    class="p-2 bg-dark-elevated hover:bg-accent-danger/10 border border-dark-border hover:border-accent-danger/30 rounded-lg transition-all"
+                    title="Eliminar">
+                    <svg class="w-4 h-4 text-accent-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
+    <!-- Empty State -->
+    <div *ngIf="!loading && medicines.length === 0" class="modern-card text-center py-20">
+      <div class="inline-block p-6 bg-dark-elevated rounded-full mb-4">
+        <svg class="w-16 h-16 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-text-primary mb-2">{{ 'MEDICINES.NO_MEDICINES' | translate }}</h3>
+      <p class="text-text-secondary mb-6">Comienza agregando tu primer medicamento</p>
+      <button (click)="openMedicineForm()" class="modern-btn-primary">
+        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+        </svg>
+        {{ 'MEDICINES.ADD_NEW' | translate }}
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="mt-6 badge-danger px-4 py-3 rounded-lg">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+        </svg>
+        <span>{{ errorMessage }}</span>
+      </div>
+    </div>
+  </main>
 </div>

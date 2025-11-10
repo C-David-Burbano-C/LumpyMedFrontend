@@ -20,8 +20,9 @@ export class CalculatorComponent implements OnInit {
   errorMessage = '';
   doseResult: DoseResponse | null = null;
   medicines: Medicine[] = [];
-  filteredMedicines!: Observable<Medicine[]>;
+  filteredMedicines$!: Observable<Medicine[]>;
   currentUser: any;
+  isAdmin = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -33,6 +34,7 @@ export class CalculatorComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
+    this.isAdmin = this.currentUser?.role === 'ADMIN';
     this.initForm();
     this.loadMedicines();
   }
@@ -45,9 +47,12 @@ export class CalculatorComponent implements OnInit {
       userConcentrationMl: ['']
     });
 
-    this.filteredMedicines = this.calculatorForm.get('medicineName')!.valueChanges.pipe(
+    this.filteredMedicines$ = this.calculatorForm.get('medicineName')!.valueChanges.pipe(
       startWith(''),
-      map(value => this._filterMedicines(value || ''))
+      map((value: string | Medicine) => {
+        const name = typeof value === 'string' ? value : value?.name;
+        return name ? this._filterMedicines(name) : this.medicines.slice();
+      })
     );
   }
 
@@ -76,42 +81,50 @@ export class CalculatorComponent implements OnInit {
     return medicine ? medicine.name : '';
   }
 
-  onSubmit(): void {
+  calculateDose(): void {
     if (this.calculatorForm.invalid) {
       return;
     }
 
-    this.calculating = true;
+    this.loading = true;
     this.errorMessage = '';
     this.doseResult = null;
 
     const formValue = this.calculatorForm.value;
-    const medicineName = typeof formValue.medicineName === 'string' 
-      ? formValue.medicineName 
-      : formValue.medicineName.name;
+    const medicine = typeof formValue.medicineName === 'object' ? formValue.medicineName : null;
+
+    if (!medicine || !medicine.name) {
+      this.errorMessage = 'Por favor selecciona un medicamento válido';
+      this.loading = false;
+      return;
+    }
 
     const request = {
-      medicineName: medicineName,
+      medicineName: medicine.name,
       weightKg: formValue.weightKg,
-      userConcentrationMg: formValue.userConcentrationMg || undefined,
-      userConcentrationMl: formValue.userConcentrationMl || undefined
+      userConcentrationMg: formValue.userConcentrationMg || medicine.concentrationMg,
+      userConcentrationMl: formValue.userConcentrationMl || medicine.concentrationMl
     };
 
     this.calculatorService.calculateDose(request).subscribe({
       next: (result) => {
         this.doseResult = result;
-        this.calculating = false;
+        this.loading = false;
       },
       error: (error) => {
         this.errorMessage = error.message;
-        this.calculating = false;
+        this.loading = false;
       }
     });
   }
 
+  get f() {
+    return this.calculatorForm.controls;
+  }
+
   retry(): void {
     this.errorMessage = '';
-    this.onSubmit();
+    this.calculateDose();
   }
 
   isResultSafe(): boolean {
