@@ -97,7 +97,26 @@ export class AuthService {
       if (error.status === 400) {
         // Intentar extraer mensaje específico del backend
         if (error.error && typeof error.error === 'string') {
-          errorMessage = error.error;
+          const errorStr = error.error.toLowerCase();
+
+          // Traducir errores comunes de base de datos a mensajes amigables
+          if (errorStr.includes('duplicate key value violates unique constraint') ||
+              errorStr.includes('unique constraint')) {
+            if (errorStr.includes('username')) {
+              errorMessage = 'El nombre de usuario ya está registrado. Por favor, elige otro.';
+            } else if (errorStr.includes('email')) {
+              errorMessage = 'El correo electrónico ya está registrado. Por favor, usa otro.';
+            } else {
+              errorMessage = 'Ya existe un registro con estos datos.';
+            }
+          } else if (errorStr.includes('check constraint') || errorStr.includes('violates check constraint')) {
+            errorMessage = 'Los datos proporcionados no cumplen con los requisitos.';
+          } else if (errorStr.includes('null value') || errorStr.includes('not-null constraint')) {
+            errorMessage = 'Faltan datos obligatorios.';
+          } else {
+            // Si no es un error conocido, mostrar el mensaje original pero más limpio
+            errorMessage = error.error.split('[')[0].trim() || 'Error en la solicitud.';
+          }
         } else if (error.error && error.error.message) {
           errorMessage = error.error.message;
         } else if (error.error && error.error.error) {
