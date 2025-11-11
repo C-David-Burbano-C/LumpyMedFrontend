@@ -32,7 +32,8 @@ export class MedicinesListComponent implements OnInit {
     this.errorMessage = '';
     this.medicinesService.getAll().subscribe({
       next: (response) => {
-        this.medicines = response.content;
+        // Backend returns array directly, not wrapped in object
+        this.medicines = Array.isArray(response) ? response : [];
         this.loading = false;
       },
       error: (error) => {

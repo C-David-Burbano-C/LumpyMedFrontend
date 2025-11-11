@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login</title>
+</head>
+<body>
+    <h1>Test Login Directo</h1>
+    <button onclick="testLogin()">Test Login</button>
+    <div id="result"></div>
+
+    <script>
+        async function testLogin() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Enviando petición...';
+            
+            try {
+                const response = await fetch('https://lumpymedbackend-production.up.railway.app/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'admin',
+                        password: 'vivalagrasa'
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <h2 style="color: green;">✅ LOGIN EXITOSO</h2>
+                        <p><strong>Token:</strong> ${data.token}</p>
+                        <p><strong>Message:</strong> ${data.message}</p>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h2 style="color: red;">❌ ERROR ${response.status}</h2>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h2 style="color: red;">❌ ERROR DE RED</h2>
+                    <p>${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

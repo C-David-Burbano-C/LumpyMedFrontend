@@ -68,7 +68,7 @@
           formControlName="mgKgDay"
           step="0.01"
           class="modern-input"
-          placeholder="10.00"
+          placeholder="60.00"
         />
         <p *ngIf="f['mgKgDay'].errors?.['required'] && f['mgKgDay'].touched" 
            class="error-message">
@@ -84,7 +84,7 @@
           type="number" 
           formControlName="dosesPerDay"
           class="modern-input"
-          placeholder="3"
+          placeholder="4"
         />
         <p *ngIf="f['dosesPerDay'].errors?.['required'] && f['dosesPerDay'].touched" 
            class="error-message">
@@ -104,7 +104,7 @@
           formControlName="concentrationMg"
           step="0.01"
           class="modern-input"
-          placeholder="100.00"
+          placeholder="160.00"
         />
         <p *ngIf="f['concentrationMg'].errors?.['required'] && f['concentrationMg'].touched" 
            class="error-message">
@@ -124,43 +124,6 @@
           placeholder="5.00"
         />
         <p *ngIf="f['concentrationMl'].errors?.['required'] && f['concentrationMl'].touched" 
-           class="error-message">
-          {{ 'VALIDATION.REQUIRED' | translate }}
-        </p>
-      </div>
-    </div>
-
-    <!-- Safe Range Row -->
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <label class="block text-sm font-medium text-text-secondary mb-2">
-          Mínimo seguro (ml)
-        </label>
-        <input 
-          type="number" 
-          formControlName="minSafeMl"
-          step="0.01"
-          class="modern-input"
-          placeholder="2.00"
-        />
-        <p *ngIf="f['minSafeMl'].errors?.['required'] && f['minSafeMl'].touched" 
-           class="error-message">
-          {{ 'VALIDATION.REQUIRED' | translate }}
-        </p>
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-text-secondary mb-2">
-          Máximo seguro (ml)
-        </label>
-        <input 
-          type="number" 
-          formControlName="maxSafeMl"
-          step="0.01"
-          class="modern-input"
-          placeholder="10.00"
-        />
-        <p *ngIf="f['maxSafeMl'].errors?.['required'] && f['maxSafeMl'].touched" 
            class="error-message">
           {{ 'VALIDATION.REQUIRED' | translate }}
         </p>

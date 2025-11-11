@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, map, tap, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
-import { User, LoginRequest, RegisterRequest, AuthResponse, RegisterResponse, RefreshTokenResponse } from '../models/user.model';
+import { User, LoginRequest, RegisterRequest, AuthResponse, RegisterResponse, RefreshTokenResponse, UserProfile } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -33,13 +33,28 @@ export class AuthService {
       .pipe(
         tap(response => {
           localStorage.setItem(environment.tokenKey, response.token);
-          const user: User = {
-            username: response.username,
-            email: '', // El backend no devuelve email en login
-            role: response.authorities.includes('ROLE_ADMIN') ? 'ADMIN' : 'USER'
-          };
-          localStorage.setItem(environment.userKey, JSON.stringify(user));
-          this.currentUserSubject.next(user);
+          
+          // Decodificar el token JWT para obtener el username
+          try {
+            const payload = JSON.parse(atob(response.token.split('.')[1]));
+            
+            const username = payload.sub || credentials.username;
+            
+            // Determinar el rol basado en el username
+            // Si el username es "admin", entonces es ADMIN, sino es USER
+            const role: 'ADMIN' | 'USER' = username.toLowerCase() === 'admin' ? 'ADMIN' : 'USER';
+            
+            const user: User = {
+              username: username,
+              email: '',
+              role: role
+            };
+            
+            localStorage.setItem(environment.userKey, JSON.stringify(user));
+            this.currentUserSubject.next(user);
+          } catch (error) {
+            // Error decodificando token
+          }
         }),
         catchError(this.handleError)
       );
@@ -93,8 +108,12 @@ export class AuthService {
       // Error del lado del cliente
       errorMessage = error.error.message;
     } else {
-      // Error del lado del servidor
-      if (error.status === 400) {
+      // Primero intentar obtener mensaje del backend
+      if (error.error && error.error.error) {
+        errorMessage = error.error.error;
+      } else if (error.error && error.error.message) {
+        errorMessage = error.error.message;
+      } else if (error.status === 400) {
         // Intentar extraer mensaje específico del backend
         if (error.error && typeof error.error === 'string') {
           const errorStr = error.error.toLowerCase();
@@ -117,10 +136,8 @@ export class AuthService {
             // Si no es un error conocido, mostrar el mensaje original pero más limpio
             errorMessage = error.error.split('[')[0].trim() || 'Error en la solicitud.';
           }
-        } else if (error.error && error.error.message) {
-          errorMessage = error.error.message;
-        } else if (error.error && error.error.error) {
-          errorMessage = error.error.error;
+        } else {
+          errorMessage = 'Error en la solicitud';
         }
       } else if (error.status === 401) {
         errorMessage = 'Credenciales inválidas';
@@ -130,8 +147,6 @@ export class AuthService {
         errorMessage = 'Recurso no encontrado';
       } else if (error.status === 409) {
         errorMessage = 'El usuario ya existe';
-      } else if (error.error && error.error.message) {
-        errorMessage = error.error.message;
       }
     }
 

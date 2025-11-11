@@ -65,7 +65,6 @@ export class CalendarComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading events:', error);
         this.snackBar.open('Error al cargar eventos', 'Cerrar', { duration: 3000 });
         this.loading = false;
       }
@@ -78,7 +77,6 @@ export class CalendarComponent implements OnInit {
         this.medicines = response.content;
       },
       error: (error) => {
-        console.error('Error loading medicines:', error);
         this.snackBar.open('Error al cargar medicamentos', 'Cerrar', { duration: 3000 });
       }
     });
@@ -95,17 +93,14 @@ export class CalendarComponent implements OnInit {
 
   openCreateEventDialog(): void {
     // TODO: Implement dialog for creating events
-    console.log('Open create event dialog');
   }
 
   handleDateClick(arg: any): void {
     // TODO: Open dialog to create new event on clicked date
-    console.log('Date clicked:', arg.dateStr);
   }
 
   handleEventClick(arg: any): void {
     // TODO: Open dialog to edit/delete event
-    console.log('Event clicked:', arg.event);
   }
 
   private updateCalendarEvents(): void {

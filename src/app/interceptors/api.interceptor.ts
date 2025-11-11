@@ -13,6 +13,7 @@ export class ApiInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Agregar token de autorización si existe
     const token = localStorage.getItem(environment.tokenKey);
+    
     if (token) {
       request = request.clone({
         setHeaders: {
