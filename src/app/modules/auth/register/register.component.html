@@ -18,24 +18,6 @@
     <!-- Register Card -->
     <div class="modern-card">
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
-        <!-- Full Name Input -->
-        <div>
-          <label class="block text-sm font-medium text-text-secondary mb-2">
-            {{ 'AUTH.FULL_NAME' | translate }}
-          </label>
-          <input 
-            type="text" 
-            formControlName="fullName" 
-            autocomplete="name"
-            class="modern-input"
-            placeholder="Nombre completo"
-          />
-          <p *ngIf="f['fullName'].errors?.['required'] && f['fullName'].touched" 
-             class="error-message">
-            {{ 'VALIDATION.REQUIRED' | translate }}
-          </p>
-        </div>
-
         <!-- Username Input -->
         <div>
           <label class="block text-sm font-medium text-text-secondary mb-2">
