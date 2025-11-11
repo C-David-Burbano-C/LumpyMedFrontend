@@ -1,0 +1,9 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Medical cross symbol -->
+  <rect x="20" y="12" width="8" height="24" rx="2" fill="#6366f1"/>
+  <rect x="12" y="20" width="24" height="8" rx="2" fill="#6366f1"/>
+  <!-- Outer circle for medical theme -->
+  <circle cx="24" cy="24" r="20" stroke="#6366f1" stroke-width="2" fill="none"/>
+  <!-- Inner accent -->
+  <circle cx="24" cy="24" r="16" stroke="#6366f1" stroke-width="1" fill="none" opacity="0.3"/>
+</svg>
