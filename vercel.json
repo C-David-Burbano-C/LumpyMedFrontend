@@ -1,9 +1,15 @@
 {
+  "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "dist/pediatric-dosage-frontend/browser",
   "devCommand": "ng serve",
   "installCommand": "npm install",
   "framework": null,
+  "functions": {
+    "src/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
