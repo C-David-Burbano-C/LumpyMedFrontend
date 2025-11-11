@@ -31,7 +31,9 @@ export class MedicineFormComponent implements OnInit {
       mgKgDay: [this.data.medicine?.mgKgDay || null, [Validators.required, Validators.min(0)]],
       dosesPerDay: [this.data.medicine?.dosesPerDay || null, [Validators.required, Validators.min(1)]],
       concentrationMg: [this.data.medicine?.concentrationMg || null, [Validators.required, Validators.min(0)]],
-      concentrationMl: [this.data.medicine?.concentrationMl || null, [Validators.required, Validators.min(0)]]
+      concentrationMl: [this.data.medicine?.concentrationMl || null, [Validators.required, Validators.min(0)]],
+      minSafeMl: [this.data.medicine?.minSafeMl || null, [Validators.required, Validators.min(0)]],
+      maxSafeMl: [this.data.medicine?.maxSafeMl || null, [Validators.required, Validators.min(0)]]
     });
   }
 

@@ -130,6 +130,43 @@
       </div>
     </div>
 
+    <!-- Safe Range Row -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-text-secondary mb-2">
+          Rango Seguro Mínimo (ml)
+        </label>
+        <input 
+          type="number" 
+          formControlName="minSafeMl"
+          step="0.01"
+          class="modern-input"
+          placeholder="5.00"
+        />
+        <p *ngIf="f['minSafeMl'].errors?.['required'] && f['minSafeMl'].touched" 
+           class="error-message">
+          {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-text-secondary mb-2">
+          Rango Seguro Máximo (ml)
+        </label>
+        <input 
+          type="number" 
+          formControlName="maxSafeMl"
+          step="0.01"
+          class="modern-input"
+          placeholder="10.00"
+        />
+        <p *ngIf="f['maxSafeMl'].errors?.['required'] && f['maxSafeMl'].touched" 
+           class="error-message">
+          {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+      </div>
+    </div>
+
     <!-- Error Message -->
     <div *ngIf="errorMessage" class="badge-danger px-4 py-3 rounded-lg">
       <div class="flex items-center">

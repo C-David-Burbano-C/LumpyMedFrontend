@@ -38,7 +38,7 @@
         <h2 class="text-2xl font-bold gradient-text">Lista de Medicamentos</h2>
         <p class="text-text-secondary text-sm mt-1">Administra el catálogo completo</p>
       </div>
-      <button (click)="openMedicineForm()" class="modern-btn-primary">
+      <button *ngIf="isAdmin" (click)="openMedicineForm()" class="modern-btn-primary">
         <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
         </svg>
@@ -75,14 +75,14 @@
               <td class="text-text-secondary text-sm">{{ medicine.description }}</td>
               <td>
                 <span class="badge-primary">
-                  {{ medicine.mgKgDay }} mg/kg/día
+                  {{ medicine.mgKgDay }} mg
                 </span>
               </td>
               <td>{{ medicine.dosesPerDay }} dosis/día</td>
               <td>{{ medicine.concentrationMg }}mg / {{ medicine.concentrationMl }}ml</td>
               <td class="text-sm text-text-secondary">{{ medicine.minSafeMl }} - {{ medicine.maxSafeMl }} ml</td>
               <td class="text-right">
-                <div class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity" *ngIf="isAdmin">
                   <button 
                     (click)="editMedicine(medicine)" 
                     class="p-2 bg-dark-elevated hover:bg-accent-primary/10 border border-dark-border hover:border-accent-primary/30 rounded-lg transition-all"
@@ -116,7 +116,7 @@
       </div>
       <h3 class="text-xl font-bold text-text-primary mb-2">{{ 'MEDICINES.NO_MEDICINES' | translate }}</h3>
       <p class="text-text-secondary mb-6">Comienza agregando tu primer medicamento</p>
-      <button (click)="openMedicineForm()" class="modern-btn-primary">
+      <button *ngIf="isAdmin" (click)="openMedicineForm()" class="modern-btn-primary">
         <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
         </svg>

@@ -27,6 +27,11 @@ export class MedicinesListComponent implements OnInit {
     this.loadMedicines();
   }
 
+  get isAdmin(): boolean {
+    const user = this.authService.getCurrentUser();
+    return user?.role === 'ADMIN';
+  }
+
   loadMedicines(): void {
     this.loading = true;
     this.errorMessage = '';
