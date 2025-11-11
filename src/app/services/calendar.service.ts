@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { CalendarEvent, CreateEventRequest, UpdateEventRequest, AiSuggestionRequest, AiSuggestionResponse } from '../models/calendar.model';
+import { CalendarEvent, CreateEventRequest, UpdateEventRequest, AiSuggestionRequest, AiSuggestionResponse, CalendarEventsResponse, CalendarFilters } from '../models/calendar.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,19 @@ export class CalendarService {
 
   constructor(private http: HttpClient) {}
 
-  getAllEvents(): Observable<CalendarEvent[]> {
-    return this.http.get<CalendarEvent[]>(`${environment.apiUrl}/calendar/events`)
+  getAllEvents(filters?: CalendarFilters): Observable<CalendarEventsResponse> {
+    let params = new HttpParams();
+
+    if (filters) {
+      if (filters.page !== undefined) params = params.set('page', filters.page.toString());
+      if (filters.size !== undefined) params = params.set('size', filters.size.toString());
+      if (filters.userId !== undefined) params = params.set('userId', filters.userId.toString());
+      if (filters.startDate) params = params.set('startDate', filters.startDate);
+      if (filters.endDate) params = params.set('endDate', filters.endDate);
+      if (filters.medicineId !== undefined) params = params.set('medicineId', filters.medicineId.toString());
+    }
+
+    return this.http.get<CalendarEventsResponse>(`${environment.apiUrl}/calendar/events`, { params })
       .pipe(
         catchError(this.handleError)
       );
@@ -64,6 +75,10 @@ export class CalendarService {
         errorMessage = 'Evento no encontrado';
       } else if (error.status === 409) {
         errorMessage = 'Conflicto de horario';
+      } else if (error.status === 401) {
+        errorMessage = 'No autorizado para acceder al calendario';
+      } else if (error.status === 403) {
+        errorMessage = 'No tienes permisos para esta acción';
       } else if (error.error && error.error.message) {
         errorMessage = error.error.message;
       }

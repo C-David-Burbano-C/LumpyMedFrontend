@@ -5,8 +5,8 @@ import { CalendarOptions } from '@fullcalendar/core';
 import { CalendarService } from '../../../services/calendar.service';
 import { MedicinesService } from '../../../services/medicines.service';
 import { AiService } from '../../../services/ai.service';
-import { CalendarEvent, CreateEventRequest } from '../../../models/calendar.model';
-import { Medicine } from '../../../models/medicine.model';
+import { CalendarEvent, CreateEventRequest, CalendarEventsResponse, CalendarFilters } from '../../../models/calendar.model';
+import { Medicine, MedicinePage } from '../../../models/medicine.model';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -34,6 +34,10 @@ export class CalendarComponent implements OnInit {
   events: CalendarEvent[] = [];
   medicines: Medicine[] = [];
   loading = false;
+  currentPage = 0;
+  pageSize = 50;
+  totalElements = 0;
+  totalPages = 0;
 
   constructor(
     private calendarService: CalendarService,
@@ -48,11 +52,15 @@ export class CalendarComponent implements OnInit {
     this.loadMedicines();
   }
 
-  loadEvents(): void {
+  loadEvents(filters?: CalendarFilters): void {
     this.loading = true;
-    this.calendarService.getAllEvents().subscribe({
-      next: (events) => {
-        this.events = events;
+    this.calendarService.getAllEvents(filters).subscribe({
+      next: (response: CalendarEventsResponse) => {
+        this.events = response.content;
+        this.currentPage = response.number;
+        this.pageSize = response.size;
+        this.totalElements = response.totalElements;
+        this.totalPages = response.totalPages;
         this.updateCalendarEvents();
         this.loading = false;
       },
@@ -64,9 +72,9 @@ export class CalendarComponent implements OnInit {
     });
   }
 
-  loadMedicines(): void {
-    this.medicinesService.getAll().subscribe({
-      next: (response) => {
+  loadMedicines(page: number = 0, size: number = 100): void {
+    this.medicinesService.getAll(page, size).subscribe({
+      next: (response: MedicinePage) => {
         this.medicines = response.content;
       },
       error: (error) => {
@@ -74,6 +82,15 @@ export class CalendarComponent implements OnInit {
         this.snackBar.open('Error al cargar medicamentos', 'Cerrar', { duration: 3000 });
       }
     });
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadEvents({ page: this.currentPage, size: this.pageSize });
+  }
+
+  onFilterChange(filters: CalendarFilters): void {
+    this.loadEvents({ ...filters, page: 0, size: this.pageSize });
   }
 
   openCreateEventDialog(): void {

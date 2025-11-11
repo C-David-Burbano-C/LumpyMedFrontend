@@ -3,43 +3,39 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-
-export interface AiRequest {
-  prompt: string;
-}
-
-export interface AiResponse {
-  response: string;
-}
+import { UserProfile, UpdateProfileRequest } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AiService {
+export class UsersService {
 
   constructor(private http: HttpClient) {}
 
-  generateResponse(prompt: string): Observable<AiResponse> {
-    const request: AiRequest = { prompt };
+  getProfile(): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${environment.apiUrl}/users/profile`)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
 
-    return this.http.post<AiResponse>(`${environment.apiUrl}/ai/generate`, request)
+  updateProfile(profile: UpdateProfileRequest): Observable<UserProfile> {
+    return this.http.put<UserProfile>(`${environment.apiUrl}/users/profile`, profile)
       .pipe(
         catchError(this.handleError)
       );
   }
 
   private handleError(error: any) {
-    let errorMessage = 'Error al generar respuesta de IA';
+    let errorMessage = 'Ha ocurrido un error desconocido';
 
     if (error.error instanceof ErrorEvent) {
       errorMessage = error.error.message;
     } else {
       if (error.status === 400) {
-        errorMessage = 'Prompt inválido para la IA';
-      } else if (error.status === 429) {
-        errorMessage = 'Límite de requests excedido (máximo 100 por hora)';
-      } else if (error.status === 401) {
-        errorMessage = 'No autorizado para usar IA';
+        errorMessage = 'Datos inválidos para actualizar el perfil';
+      } else if (error.status === 409) {
+        errorMessage = 'El nombre de usuario o email ya está en uso';
       } else if (error.error && error.error.message) {
         errorMessage = error.error.message;
       }
