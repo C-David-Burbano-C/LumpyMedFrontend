@@ -13,7 +13,7 @@
     "CONFIRM_PASSWORD": "Confirmar Contraseña",
     "ROLE": "Rol",
     "LOGIN_SUCCESS": "Inicio de sesión exitoso",
-    "REGISTER_SUCCESS": "Registro exitoso",
+    "REGISTER_SUCCESS": "Usuario registrado",
     "LOGOUT_CONFIRM": "¿Está seguro que desea cerrar sesión?",
     "SESSION_EXPIRED": "Su sesión ha expirado. Por favor, inicie sesión nuevamente."
   },
