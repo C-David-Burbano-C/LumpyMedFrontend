@@ -94,7 +94,16 @@ export class AuthService {
       errorMessage = error.error.message;
     } else {
       // Error del lado del servidor
-      if (error.status === 401) {
+      if (error.status === 400) {
+        // Intentar extraer mensaje específico del backend
+        if (error.error && typeof error.error === 'string') {
+          errorMessage = error.error;
+        } else if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.error && error.error.error) {
+          errorMessage = error.error.error;
+        }
+      } else if (error.status === 401) {
         errorMessage = 'Credenciales inválidas';
       } else if (error.status === 403) {
         errorMessage = 'No tienes permisos para realizar esta acción';
