@@ -31,8 +31,8 @@ export class MedicinesListComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
     this.medicinesService.getAll().subscribe({
-      next: (data) => {
-        this.medicines = data;
+      next: (response) => {
+        this.medicines = response.content;
         this.loading = false;
       },
       error: (error) => {

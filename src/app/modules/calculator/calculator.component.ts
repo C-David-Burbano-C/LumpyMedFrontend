@@ -59,8 +59,8 @@ export class CalculatorComponent implements OnInit {
   loadMedicines(): void {
     this.loading = true;
     this.medicinesService.getAll().subscribe({
-      next: (data) => {
-        this.medicines = data;
+      next: (response) => {
+        this.medicines = response.content;
         this.loading = false;
       },
       error: (error) => {

@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MedicinesService } from '../../../services/medicines.service';
-import { Medicine } from '../../../models/medicine.model';
+import { Medicine, CreateMedicineRequest, UpdateMedicineRequest } from '../../../models/medicine.model';
 
 @Component({
   selector: 'app-medicine-form',
@@ -27,7 +27,7 @@ export class MedicineFormComponent implements OnInit {
   ngOnInit(): void {
     this.medicineForm = this.formBuilder.group({
       name: [this.data.medicine?.name || '', [Validators.required]],
-      description: [this.data.medicine?.description || '', [Validators.required]],
+      description: [this.data.medicine?.description || ''],
       mgKgDay: [this.data.medicine?.mgKgDay || '', [Validators.required, Validators.min(0)]],
       dosesPerDay: [this.data.medicine?.dosesPerDay || '', [Validators.required, Validators.min(1)]],
       concentrationMg: [this.data.medicine?.concentrationMg || '', [Validators.required, Validators.min(0)]],
@@ -49,22 +49,31 @@ export class MedicineFormComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    const medicineData: Medicine = this.medicineForm.value;
-
-    const request = this.isEditMode
-      ? this.medicinesService.update(this.data.medicine!.id!, medicineData)
-      : this.medicinesService.create(medicineData);
-
-    request.subscribe({
-      next: () => {
-        this.loading = false;
-        this.dialogRef.close(true);
-      },
-      error: (error) => {
-        this.loading = false;
-        this.errorMessage = error.message || 'Error al guardar medicamento.';
-      }
-    });
+    if (this.isEditMode) {
+      const updateData: UpdateMedicineRequest = this.medicineForm.value;
+      this.medicinesService.update(this.data.medicine!.id!, updateData).subscribe({
+        next: () => {
+          this.loading = false;
+          this.dialogRef.close(true);
+        },
+        error: (error) => {
+          this.loading = false;
+          this.errorMessage = error.message || 'Error al actualizar medicamento.';
+        }
+      });
+    } else {
+      const createData: CreateMedicineRequest = this.medicineForm.value;
+      this.medicinesService.create(createData).subscribe({
+        next: () => {
+          this.loading = false;
+          this.dialogRef.close(true);
+        },
+        error: (error) => {
+          this.loading = false;
+          this.errorMessage = error.message || 'Error al crear medicamento.';
+        }
+      });
+    }
   }
 
   onCancel(): void {
