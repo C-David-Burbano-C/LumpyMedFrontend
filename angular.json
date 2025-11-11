@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "pediatric-dosage-frontend": {
+    "lumpy-med-frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/pediatric-dosage-frontend",
+            "outputPath": "dist/lumpy-med-frontend",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -68,10 +68,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "pediatric-dosage-frontend:build:production"
+              "buildTarget": "lumpy-med-frontend:build:production"
             },
             "development": {
-              "buildTarget": "pediatric-dosage-frontend:build:development"
+              "buildTarget": "lumpy-med-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -79,7 +79,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "pediatric-dosage-frontend:build"
+            "buildTarget": "lumpy-med-frontend:build"
           }
         },
         "test": {
