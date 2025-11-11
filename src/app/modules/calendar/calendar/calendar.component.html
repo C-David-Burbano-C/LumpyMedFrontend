@@ -1,0 +1,26 @@
+<div class="calendar-container">
+  <mat-card class="calendar-card">
+    <mat-card-header>
+      <mat-card-title>Calendario de Medicación</mat-card-title>
+      <mat-card-subtitle>Programa y administra las dosis de medicamentos con ayuda de IA</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="calendar-toolbar">
+        <button mat-raised-button color="primary" (click)="openCreateEventDialog()">
+          <mat-icon>add</mat-icon>
+          Nuevo Evento
+        </button>
+      </div>
+
+      <div class="calendar-wrapper" *ngIf="!loading">
+        <full-calendar [options]="calendarOptions"></full-calendar>
+      </div>
+
+      <div class="loading-spinner" *ngIf="loading">
+        <mat-spinner></mat-spinner>
+        <p>Cargando calendario...</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

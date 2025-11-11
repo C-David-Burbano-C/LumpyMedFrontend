@@ -1,0 +1,105 @@
+.calendar-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.calendar-card {
+  margin-bottom: 20px;
+}
+
+.calendar-toolbar {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.calendar-wrapper {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+}
+
+.loading-spinner p {
+  margin-top: 16px;
+  color: #666;
+}
+
+/* FullCalendar custom styles */
+:host ::ng-deep .fc {
+  font-family: inherit;
+}
+
+:host ::ng-deep .fc-header-toolbar {
+  margin-bottom: 1em;
+  flex-wrap: wrap;
+}
+
+:host ::ng-deep .fc-button {
+  background: #3788d8 !important;
+  border: none !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transition: background-color 0.2s !important;
+}
+
+:host ::ng-deep .fc-button:hover {
+  background: #2c6cb8 !important;
+}
+
+:host ::ng-deep .fc-button:not(:disabled).fc-button-active,
+:host ::ng-deep .fc-button:not(:disabled):active {
+  background: #2c6cb8 !important;
+}
+
+:host ::ng-deep .fc-today-button {
+  background: #00d4aa !important;
+}
+
+:host ::ng-deep .fc-today-button:hover {
+  background: #00b894 !important;
+}
+
+:host ::ng-deep .fc-event {
+  border-radius: 4px;
+  border: none;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+:host ::ng-deep .fc-daygrid-event {
+  margin: 1px 0;
+}
+
+:host ::ng-deep .fc-col-header {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+}
+
+:host ::ng-deep .fc-day-today {
+  background: #fff3cd !important;
+}
+
+:host ::ng-deep .fc-daygrid-day-number {
+  font-weight: 500;
+  color: #495057;
+}
+
+:host ::ng-deep .fc-day-today .fc-daygrid-day-number {
+  color: #856404;
+  font-weight: 600;
+}

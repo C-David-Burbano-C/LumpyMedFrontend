@@ -25,6 +25,11 @@ const routes: Routes = [
     data: { role: 'ADMIN' }
   },
   {
+    path: 'calendar',
+    loadChildren: () => import('./modules/calendar/calendar.module').then(m => m.CalendarModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: '**',
     redirectTo: '/login'
   }
