@@ -36,7 +36,7 @@ export class AuthService {
           const user: User = {
             username: response.username,
             email: '', // El backend no devuelve email en login
-            rol: response.authorities.includes('ROLE_ADMIN') ? 'ADMIN' : 'USER'
+            role: response.authorities.includes('ROLE_ADMIN') ? 'ADMIN' : 'USER'
           };
           localStorage.setItem(environment.userKey, JSON.stringify(user));
           this.currentUserSubject.next(user);

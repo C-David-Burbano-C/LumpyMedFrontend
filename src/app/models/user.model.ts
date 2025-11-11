@@ -3,7 +3,7 @@ export interface User {
   username: string;
   email: string;
   password?: string;
-  rol: 'USER' | 'ADMIN';
+  role: 'USER' | 'ADMIN';
 }
 
 export interface LoginRequest {

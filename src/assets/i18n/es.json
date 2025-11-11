@@ -55,6 +55,10 @@
     "SAVE_SUCCESS": "Medicamento guardado exitosamente",
     "LIST": "Lista de Medicamentos"
   },
+  "ROLES": {
+    "USER": "Usuario",
+    "ADMIN": "Administrador"
+  },
   "COMMON": {
     "LOADING": "Cargando...",
     "ERROR": "Error",
@@ -84,8 +88,10 @@
   },
   "VALIDATION": {
     "REQUIRED": "Este campo es obligatorio",
+    "INVALID_EMAIL": "Correo electrónico inválido",
+    "MIN_LENGTH": "Debe tener al menos {{length}} caracteres",
+    "PASSWORDS_DO_NOT_MATCH": "Las contraseñas no coinciden",
     "EMAIL": "Ingrese un correo electrónico válido",
-    "MIN_LENGTH": "Debe tener al menos {{value}} caracteres",
     "MAX_LENGTH": "No puede exceder {{value}} caracteres",
     "MIN": "El valor mínimo es {{value}}",
     "MAX": "El valor máximo es {{value}}",
