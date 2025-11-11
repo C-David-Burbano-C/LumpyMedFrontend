@@ -10,6 +10,7 @@ import { Medicine, MedicinePage } from '../../../models/medicine.model';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import { EventFormComponent } from '../event-form/event-form.component';
 
 @Component({
   selector: 'app-calendar',
@@ -92,15 +93,43 @@ export class CalendarComponent implements OnInit {
   }
 
   openCreateEventDialog(): void {
-    // TODO: Implement dialog for creating events
+    const dialogRef = this.dialog.open(EventFormComponent, {
+      width: '600px',
+      data: {
+        medicines: this.medicines,
+        event: null // null indica que es creación
+      },
+      panelClass: 'dark-dialog'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadEvents(); // Recargar eventos después de crear uno nuevo
+      }
+    });
   }
 
   handleDateClick(arg: any): void {
-    // TODO: Open dialog to create new event on clicked date
+    const dialogRef = this.dialog.open(EventFormComponent, {
+      width: '600px',
+      data: {
+        medicines: this.medicines,
+        event: null, // null indica que es creación
+        selectedDate: arg.date // Pasar la fecha seleccionada
+      },
+      panelClass: 'dark-dialog'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadEvents(); // Recargar eventos después de crear uno nuevo
+      }
+    });
   }
 
   handleEventClick(arg: any): void {
-    // TODO: Open dialog to edit/delete event
+    // Por ahora solo mostrar un mensaje, después implementaremos edición
+    this.snackBar.open('Funcionalidad de edición próximamente', 'Cerrar', { duration: 3000 });
   }
 
   private updateCalendarEvents(): void {

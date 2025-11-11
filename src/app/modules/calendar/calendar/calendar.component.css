@@ -252,3 +252,28 @@
 :host ::ng-deep .fc-scroller::-webkit-scrollbar-thumb:hover {
   background: #764ba2;
 }
+
+/* Dialog Dark Theme */
+:host ::ng-deep .dark-dialog .mat-mdc-dialog-container {
+  background: #1a1f2e !important;
+  color: #e5e7eb !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+:host ::ng-deep .dark-dialog .mat-mdc-dialog-title {
+  color: #e5e7eb !important;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+:host ::ng-deep .dark-dialog .mat-mdc-dialog-content {
+  background: #1a1f2e !important;
+  color: #e5e7eb !important;
+}
+
+:host ::ng-deep .dark-dialog .mat-mdc-dialog-actions {
+  background: #1a1f2e !important;
+  padding: 16px 24px !important;
+  border-top: 1px solid #2a2f3e;
+}
