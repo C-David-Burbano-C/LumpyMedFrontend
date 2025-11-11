@@ -15,10 +15,25 @@ export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
-  rol: 'USER' | 'ADMIN';
+  role?: 'USER' | 'ADMIN';
 }
 
 export interface AuthResponse {
+  token: string;
+  type: string;
+  username: string;
+  authorities: string[];
+}
+
+export interface RegisterResponse {
   message: string;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+  };
+}
+
+export interface RefreshTokenResponse {
   token: string;
 }

@@ -11,8 +11,36 @@ export class ApiInterceptor implements HttpInterceptor {
   constructor(private router: Router) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Modo demo: no agregar token ni manejar errores HTTP reales
-    // ya que no hay backend
-    return next.handle(request);
+    // Agregar token de autorización si existe
+    const token = localStorage.getItem(environment.tokenKey);
+    if (token) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    }
+
+    // Agregar Content-Type si no está presente y es un POST/PUT/PATCH
+    if (!request.headers.has('Content-Type') &&
+        (request.method === 'POST' || request.method === 'PUT' || request.method === 'PATCH')) {
+      request = request.clone({
+        setHeaders: {
+          'Content-Type': 'application/json'
+        }
+      });
+    }
+
+    return next.handle(request).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          // Token expirado o inválido
+          localStorage.removeItem(environment.tokenKey);
+          localStorage.removeItem(environment.userKey);
+          this.router.navigate(['/login']);
+        }
+        return throwError(() => error);
+      })
+    );
   }
 }

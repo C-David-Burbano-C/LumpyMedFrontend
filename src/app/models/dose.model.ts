@@ -1,14 +1,12 @@
-import { Medicine } from './medicine.model';
-
 export interface DoseRequest {
   medicineName: string;
   weightKg: number;
-  userConcentrationMg?: number;
-  userConcentrationMl?: number;
+  userConcentrationMg: number;
+  userConcentrationMl: number;
 }
 
 export interface DoseResponse {
-  medicine: Medicine;
+  medicine: string;
   weightKg: number;
   mgPerDay: number;
   dosesPerDay: number;

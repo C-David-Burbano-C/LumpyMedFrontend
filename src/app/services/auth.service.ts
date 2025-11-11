@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject, of, delay } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
-import { User, LoginRequest, RegisterRequest, AuthResponse } from '../models/user.model';
+import { User, LoginRequest, RegisterRequest, AuthResponse, RegisterResponse, RefreshTokenResponse } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,14 +13,10 @@ export class AuthService {
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
-  // Usuarios de ejemplo para modo demo (sin backend)
-  private mockUsers = [
-    { username: 'admin', email: 'admin@lumpymed.com', password: 'admin123', rol: 'ADMIN' as const },
-    { username: 'doctor', email: 'doctor@lumpymed.com', password: 'doctor123', rol: 'ADMIN' as const },
-    { username: 'user', email: 'user@lumpymed.com', password: 'user123', rol: 'USER' as const }
-  ];
-
-  constructor(private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
     const storedUser = localStorage.getItem(environment.userKey);
     this.currentUserSubject = new BehaviorSubject<User | null>(
       storedUser ? JSON.parse(storedUser) : null
@@ -31,39 +29,37 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<AuthResponse> {
-    // Simulación de login sin backend
-    const user = this.mockUsers.find(
-      u => (u.username === credentials.username || u.email === credentials.username) 
-           && u.password === credentials.password
-    );
-
-    if (user) {
-      // Generar un token simulado
-      const mockToken = this.generateMockToken(user);
-      const response: AuthResponse = { 
-        token: mockToken,
-        message: 'Login exitoso'
-      };
-      
-      localStorage.setItem(environment.tokenKey, mockToken);
-      const userInfo: User = {
-        username: user.username,
-        email: user.email,
-        rol: user.rol
-      };
-      localStorage.setItem(environment.userKey, JSON.stringify(userInfo));
-      this.currentUserSubject.next(userInfo);
-      
-      return of(response).pipe(delay(500)); // Simular delay de red
-    } else {
-      throw new Error('Credenciales inválidas');
-    }
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, credentials)
+      .pipe(
+        tap(response => {
+          localStorage.setItem(environment.tokenKey, response.token);
+          const user: User = {
+            username: response.username,
+            email: '', // El backend no devuelve email en login
+            rol: response.authorities.includes('ROLE_ADMIN') ? 'ADMIN' : 'USER'
+          };
+          localStorage.setItem(environment.userKey, JSON.stringify(user));
+          this.currentUserSubject.next(user);
+        }),
+        catchError(this.handleError)
+      );
   }
 
-  register(userData: RegisterRequest): Observable<any> {
-    // Simulación de registro sin backend
-    console.log('Usuario registrado (modo demo):', userData);
-    return of({ message: 'Usuario registrado exitosamente' }).pipe(delay(500));
+  register(userData: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${environment.apiUrl}/auth/register`, userData)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  refreshToken(): Observable<RefreshTokenResponse> {
+    return this.http.post<RefreshTokenResponse>(`${environment.apiUrl}/auth/refresh`, {})
+      .pipe(
+        tap(response => {
+          localStorage.setItem(environment.tokenKey, response.token);
+        }),
+        catchError(this.handleError)
+      );
   }
 
   logout(): void {
@@ -76,7 +72,7 @@ export class AuthService {
   isAuthenticated(): boolean {
     const token = localStorage.getItem(environment.tokenKey);
     if (!token) return false;
-    
+
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const expiration = payload.exp * 1000;
@@ -90,33 +86,27 @@ export class AuthService {
     return this.currentUserValue;
   }
 
-  private generateMockToken(user: any): string {
-    // Generar un token JWT simulado (no es seguro, solo para demo)
-    const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-    const payload = btoa(JSON.stringify({
-      sub: user.username,
-      email: user.email,
-      rol: user.rol,
-      exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24) // 24 horas
-    }));
-    const signature = btoa('mock-signature');
-    return `${header}.${payload}.${signature}`;
-  }
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Ha ocurrido un error desconocido';
 
-  private decodeToken(token: string): User {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return {
-        username: payload.sub || '',
-        email: payload.email || '',
-        rol: payload.rol || 'USER'
-      };
-    } catch (error) {
-      return {
-        username: '',
-        email: '',
-        rol: 'USER'
-      };
+    if (error.error instanceof ErrorEvent) {
+      // Error del lado del cliente
+      errorMessage = error.error.message;
+    } else {
+      // Error del lado del servidor
+      if (error.status === 401) {
+        errorMessage = 'Credenciales inválidas';
+      } else if (error.status === 403) {
+        errorMessage = 'No tienes permisos para realizar esta acción';
+      } else if (error.status === 404) {
+        errorMessage = 'Recurso no encontrado';
+      } else if (error.status === 409) {
+        errorMessage = 'El usuario ya existe';
+      } else if (error.error && error.error.message) {
+        errorMessage = error.error.message;
+      }
     }
+
+    return throwError(() => new Error(errorMessage));
   }
 }
