@@ -2,10 +2,43 @@
   padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
+  background: #0f1419;
+  min-height: 100vh;
 }
 
 .calendar-card {
   margin-bottom: 20px;
+  background: #1a1f2e !important;
+  border: 1px solid #2a2f3e;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Material Card Dark Theme */
+:host ::ng-deep .calendar-card {
+  background: #1a1f2e !important;
+}
+
+:host ::ng-deep .mat-mdc-card {
+  background: #1a1f2e !important;
+  color: #e5e7eb !important;
+}
+
+:host ::ng-deep .mat-mdc-card-header {
+  background: #1a1f2e !important;
+}
+
+:host ::ng-deep .mat-mdc-card-title {
+  color: #e5e7eb !important;
+  font-weight: 600;
+}
+
+:host ::ng-deep .mat-mdc-card-subtitle {
+  color: #9ca3af !important;
+}
+
+:host ::ng-deep .mat-mdc-card-content {
+  background: #1a1f2e !important;
+  color: #e5e7eb !important;
 }
 
 .calendar-toolbar {
@@ -14,11 +47,29 @@
   justify-content: flex-end;
 }
 
+/* Button Dark Theme */
+:host ::ng-deep .calendar-toolbar button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border: none;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+:host ::ng-deep .calendar-toolbar button:hover {
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+}
+
+:host ::ng-deep .mat-icon {
+  color: white !important;
+}
+
 .calendar-wrapper {
-  background: white;
-  border-radius: 8px;
+  background: #1a1f2e;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid #2a2f3e;
 }
 
 .loading-spinner {
@@ -27,79 +78,177 @@
   align-items: center;
   justify-content: center;
   padding: 50px;
+  background: #1a1f2e;
 }
 
 .loading-spinner p {
   margin-top: 16px;
-  color: #666;
+  color: #9ca3af;
 }
 
-/* FullCalendar custom styles */
+:host ::ng-deep .mat-mdc-progress-spinner circle {
+  stroke: #667eea !important;
+}
+
+/* FullCalendar Dark Theme */
 :host ::ng-deep .fc {
   font-family: inherit;
+  background: #1a1f2e;
 }
 
 :host ::ng-deep .fc-header-toolbar {
   margin-bottom: 1em;
   flex-wrap: wrap;
+  background: #1a1f2e;
+  padding: 16px;
+  border-radius: 12px 12px 0 0;
+}
+
+:host ::ng-deep .fc-toolbar-title {
+  color: #e5e7eb !important;
+  font-weight: 600;
 }
 
 :host ::ng-deep .fc-button {
-  background: #3788d8 !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   border: none !important;
   color: white !important;
   padding: 8px 16px !important;
-  border-radius: 4px !important;
+  border-radius: 8px !important;
   font-size: 14px !important;
   font-weight: 500 !important;
-  transition: background-color 0.2s !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
 }
 
 :host ::ng-deep .fc-button:hover {
-  background: #2c6cb8 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
 }
 
 :host ::ng-deep .fc-button:not(:disabled).fc-button-active,
 :host ::ng-deep .fc-button:not(:disabled):active {
-  background: #2c6cb8 !important;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+  box-shadow: 0 2px 8px rgba(118, 75, 162, 0.4) !important;
 }
 
 :host ::ng-deep .fc-today-button {
-  background: #00d4aa !important;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+  box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3) !important;
 }
 
 :host ::ng-deep .fc-today-button:hover {
-  background: #00b894 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.4) !important;
 }
 
-:host ::ng-deep .fc-event {
-  border-radius: 4px;
-  border: none;
-  padding: 2px 6px;
-  font-size: 12px;
-  font-weight: 500;
+/* Calendar Grid */
+:host ::ng-deep .fc-scrollgrid {
+  border-color: #2a2f3e !important;
 }
 
-:host ::ng-deep .fc-daygrid-event {
-  margin: 1px 0;
+:host ::ng-deep .fc-theme-standard td,
+:host ::ng-deep .fc-theme-standard th {
+  border-color: #2a2f3e !important;
 }
 
 :host ::ng-deep .fc-col-header {
-  background: #f8f9fa;
+  background: #212631 !important;
   font-weight: 600;
-  color: #495057;
+  color: #9ca3af !important;
+}
+
+:host ::ng-deep .fc-col-header-cell {
+  padding: 12px 0;
+  border-color: #2a2f3e !important;
+}
+
+/* Days */
+:host ::ng-deep .fc-daygrid-day {
+  background: #1a1f2e !important;
+  transition: background-color 0.2s ease;
+}
+
+:host ::ng-deep .fc-daygrid-day:hover {
+  background: #212631 !important;
+  cursor: pointer;
 }
 
 :host ::ng-deep .fc-day-today {
-  background: #fff3cd !important;
+  background: rgba(102, 126, 234, 0.1) !important;
+  border: 1px solid rgba(102, 126, 234, 0.3) !important;
 }
 
 :host ::ng-deep .fc-daygrid-day-number {
   font-weight: 500;
-  color: #495057;
+  color: #9ca3af !important;
+  padding: 8px;
 }
 
 :host ::ng-deep .fc-day-today .fc-daygrid-day-number {
-  color: #856404;
-  font-weight: 600;
+  color: #667eea !important;
+  font-weight: 700;
+}
+
+:host ::ng-deep .fc-day-other .fc-daygrid-day-number {
+  color: #4b5563 !important;
+}
+
+/* Events */
+:host ::ng-deep .fc-event {
+  border-radius: 6px;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+:host ::ng-deep .fc-event:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+:host ::ng-deep .fc-daygrid-event {
+  margin: 2px 1px;
+}
+
+:host ::ng-deep .fc-event-title {
+  color: white !important;
+  font-weight: 500;
+}
+
+/* Time Grid */
+:host ::ng-deep .fc-timegrid-slot {
+  height: 3em;
+  border-color: #2a2f3e !important;
+}
+
+:host ::ng-deep .fc-timegrid-slot-label {
+  color: #9ca3af !important;
+  border-color: #2a2f3e !important;
+}
+
+:host ::ng-deep .fc-timegrid-axis {
+  background: #212631 !important;
+}
+
+/* Scrollbars */
+:host ::ng-deep .fc-scroller::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+:host ::ng-deep .fc-scroller::-webkit-scrollbar-track {
+  background: #1a1f2e;
+}
+
+:host ::ng-deep .fc-scroller::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 4px;
+}
+
+:host ::ng-deep .fc-scroller::-webkit-scrollbar-thumb:hover {
+  background: #764ba2;
 }

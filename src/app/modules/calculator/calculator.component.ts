@@ -60,7 +60,8 @@ export class CalculatorComponent implements OnInit {
     this.loading = true;
     this.medicinesService.getAll().subscribe({
       next: (response) => {
-        this.medicines = response.content;
+        // Backend returns array directly, not wrapped in object
+        this.medicines = Array.isArray(response) ? response : [];
         this.loading = false;
       },
       error: (error) => {
@@ -72,6 +73,10 @@ export class CalculatorComponent implements OnInit {
 
   private _filterMedicines(value: string): Medicine[] {
     const filterValue = value.toLowerCase();
+    // Verificar que medicines esté inicializado
+    if (!this.medicines || !Array.isArray(this.medicines)) {
+      return [];
+    }
     return this.medicines.filter(medicine => 
       medicine.name.toLowerCase().includes(filterValue)
     );
