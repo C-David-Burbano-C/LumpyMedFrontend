@@ -13,6 +13,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { EventFormComponent } from '../event-form/event-form.component';
+import { EventDetailsDialogComponent, EventDetailsData } from '../event-details-dialog/event-details-dialog.component';
 
 @Component({
   selector: 'app-calendar',
@@ -160,24 +161,21 @@ export class CalendarComponent implements OnInit {
     const event = arg.event;
     const extendedProps = event.extendedProps || {};
 
-    // Mostrar información del evento
-    const title = event.title || 'Sin título';
-    const description = extendedProps.description || 'Sin descripción';
-    const medicineName = this.getMedicineName(extendedProps.medicineId);
+    // Preparar datos para el diálogo
+    const eventData: EventDetailsData = {
+      title: event.title || 'Sin título',
+      description: extendedProps.description || '',
+      medicineName: this.getMedicineName(extendedProps.medicineId),
+      startDate: new Date(event.start),
+      endDate: new Date(event.end),
+      backgroundColor: event.backgroundColor || '#3788d8'
+    };
 
-    // Crear mensaje con la información del evento
-    let message = `<strong>${title}</strong>`;
-    if (medicineName) {
-      message += `<br><small>Medicamento: ${medicineName}</small>`;
-    }
-    if (description && description.trim()) {
-      message += `<br><br>${description}`;
-    }
-
-    // Mostrar en snackbar con duración más larga
-    this.snackBar.open(message, 'Cerrar', {
-      duration: 8000,
-      panelClass: ['event-info-snackbar']
+    // Abrir diálogo con detalles del evento
+    this.dialog.open(EventDetailsDialogComponent, {
+      width: '450px',
+      data: eventData,
+      panelClass: 'dark-dialog'
     });
   }
 

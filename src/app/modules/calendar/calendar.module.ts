@@ -18,6 +18,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CalendarRoutingModule } from './calendar-routing.module';
 import { CalendarComponent } from './calendar/calendar.component';
 import { EventFormComponent } from './event-form/event-form.component';
+import { EventDetailsDialogComponent } from './event-details-dialog/event-details-dialog.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 
 @NgModule({
@@ -43,7 +44,8 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     MatAutocompleteModule,
     MatTooltipModule,
     FullCalendarModule,
-    EventFormComponent
+    EventFormComponent,
+    EventDetailsDialogComponent
   ]
 })
 export class CalendarModule { }
