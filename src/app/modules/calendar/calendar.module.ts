@@ -11,10 +11,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { CalendarRoutingModule } from './calendar-routing.module';
 import { CalendarComponent } from './calendar/calendar.component';
+import { EventFormComponent } from './event-form/event-form.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
 
 @NgModule({
@@ -37,7 +40,10 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     MatDialogModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    FullCalendarModule
+    MatAutocompleteModule,
+    MatTooltipModule,
+    FullCalendarModule,
+    EventFormComponent
   ]
 })
 export class CalendarModule { }

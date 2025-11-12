@@ -374,3 +374,39 @@
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
+
+/* Autocomplete Dropdown Dark Theme */
+:host ::ng-deep .mat-mdc-autocomplete-panel {
+  background: #1a1f2e !important;
+  border: 1px solid #2a2f3e !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  max-height: 300px !important;
+}
+
+:host ::ng-deep .mat-mdc-option {
+  color: #e5e7eb !important;
+  background: transparent !important;
+  transition: background-color 0.2s ease !important;
+  min-height: 48px !important;
+  padding: 8px 16px !important;
+}
+
+:host ::ng-deep .mat-mdc-option:hover {
+  background: rgba(102, 126, 234, 0.1) !important;
+}
+
+:host ::ng-deep .mat-mdc-option.mdc-list-item--selected {
+  background: rgba(102, 126, 234, 0.2) !important;
+  color: #667eea !important;
+}
+
+:host ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
+  color: #e5e7eb !important;
+  font-weight: 500 !important;
+}
+
+:host ::ng-deep .mat-mdc-option .mdc-list-item__secondary-text {
+  color: #9ca3af !important;
+  font-size: 12px !important;
+}
