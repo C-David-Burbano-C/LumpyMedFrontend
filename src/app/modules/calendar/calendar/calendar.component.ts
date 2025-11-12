@@ -157,8 +157,34 @@ export class CalendarComponent implements OnInit {
   }
 
   handleEventClick(arg: any): void {
-    // Por ahora solo mostrar un mensaje, después implementaremos edición
-    this.snackBar.open('Funcionalidad de edición próximamente', 'Cerrar', { duration: 3000 });
+    const event = arg.event;
+    const extendedProps = event.extendedProps || {};
+
+    // Mostrar información del evento
+    const title = event.title || 'Sin título';
+    const description = extendedProps.description || 'Sin descripción';
+    const medicineName = this.getMedicineName(extendedProps.medicineId);
+
+    // Crear mensaje con la información del evento
+    let message = `<strong>${title}</strong>`;
+    if (medicineName) {
+      message += `<br><small>Medicamento: ${medicineName}</small>`;
+    }
+    if (description && description.trim()) {
+      message += `<br><br>${description}`;
+    }
+
+    // Mostrar en snackbar con duración más larga
+    this.snackBar.open(message, 'Cerrar', {
+      duration: 8000,
+      panelClass: ['event-info-snackbar']
+    });
+  }
+
+  private getMedicineName(medicineId?: number): string {
+    if (!medicineId || !this.medicines) return '';
+    const medicine = this.medicines.find(m => m.id === medicineId);
+    return medicine ? medicine.name : '';
   }
 
   private updateCalendarEvents(): void {

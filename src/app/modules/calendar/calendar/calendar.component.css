@@ -277,3 +277,44 @@
   padding: 16px 24px !important;
   border-top: 1px solid #2a2f3e;
 }
+
+/* Event Info Snackbar */
+:host ::ng-deep .event-info-snackbar .mat-mdc-snack-bar-container {
+  background: linear-gradient(135deg, #1a1f2e 0%, #212631 100%) !important;
+  border: 1px solid #2a2f3e !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  min-width: 300px !important;
+  max-width: 500px !important;
+}
+
+:host ::ng-deep .event-info-snackbar .mat-mdc-snack-bar-label {
+  color: #e5e7eb !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+:host ::ng-deep .event-info-snackbar .mat-mdc-snack-bar-label strong {
+  color: #667eea !important;
+  font-weight: 600 !important;
+  display: block !important;
+  margin-bottom: 4px !important;
+}
+
+:host ::ng-deep .event-info-snackbar .mat-mdc-snack-bar-label small {
+  color: #9ca3af !important;
+  font-size: 12px !important;
+  font-style: italic !important;
+}
+
+:host ::ng-deep .event-info-snackbar .mdc-snackbar__action {
+  color: #667eea !important;
+  font-weight: 500 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+:host ::ng-deep .event-info-snackbar .mdc-snackbar__action:hover {
+  color: #764ba2 !important;
+}

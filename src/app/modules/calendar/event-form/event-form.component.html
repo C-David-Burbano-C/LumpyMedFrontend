@@ -1,107 +1,186 @@
-<div class="event-form-container">
-  <!-- Dialog Header -->
-  <div class="flex items-center justify-between mb-6 pb-4 border-b border-dark-border">
-    <div class="flex items-center space-x-3">
-      <div class="p-2 bg-gradient-to-br from-accent-primary to-accent-purple rounded-lg">
-        <mat-icon class="text-white">event</mat-icon>
-      </div>
-      <div>
-        <h2 class="text-xl font-bold text-text-primary">
-          {{ isEditMode ? 'Editar Evento' : 'Nuevo Evento' }}
-        </h2>
-        <p class="text-sm text-text-secondary">Complete la información del evento de medicación</p>
+<div class="min-h-screen bg-dark-bg p-6">
+  <div class="max-w-2xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-center mb-6">
+      <div class="flex items-center space-x-3">
+        <div class="p-3 bg-gradient-to-br from-accent-primary to-accent-purple rounded-xl">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <div class="text-center">
+          <h2 class="text-2xl font-bold text-text-primary">
+            {{ isEditMode ? 'Editar Evento' : 'Nuevo Evento' }}
+          </h2>
+          <p class="text-sm text-text-secondary">Complete la información del evento de medicación</p>
+        </div>
       </div>
     </div>
-    <button mat-dialog-close class="p-2 hover:bg-dark-hover rounded-lg transition-colors">
-      <mat-icon class="w-5 h-5 text-text-tertiary">close</mat-icon>
-    </button>
+
+    <!-- Form Card -->
+    <div class="modern-card">
+      <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <!-- Title Input -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">
+            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+            </svg>
+            Título del Evento
+          </label>
+          <input
+            type="text"
+            formControlName="title"
+            maxlength="50"
+            class="modern-input"
+            placeholder="Ej: Toma de medicamento"
+          />
+          <div class="flex justify-between items-center mt-1">
+            <div class="text-xs text-text-tertiary">
+              {{ f['title'].value?.length || 0 }}/50 caracteres
+            </div>
+            <div *ngIf="f['title'].errors?.['required'] && f['title'].touched" class="text-xs text-accent-danger">
+              El título es obligatorio
+            </div>
+            <div *ngIf="f['title'].errors?.['whitespace'] && f['title'].touched" class="text-xs text-accent-danger">
+              No puede contener solo espacios
+            </div>
+            <div *ngIf="f['title'].errors?.['maxlength'] && f['title'].touched" class="text-xs text-accent-danger">
+              Máximo 50 caracteres
+            </div>
+          </div>
+        </div>
+
+        <!-- Description Input with Tooltip -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">
+            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+            </svg>
+            Descripción (opcional)
+          </label>
+          <div class="relative">
+            <input
+              type="text"
+              formControlName="description"
+              maxlength="200"
+              class="modern-input"
+              placeholder="Notas adicionales sobre el evento"
+              [matTooltip]="f['description'].value || 'Sin descripción'"
+              matTooltipPosition="above"
+              [matTooltipDisabled]="!f['description'].value"
+            />
+            <div class="flex justify-between items-center mt-1">
+              <div class="text-xs text-text-tertiary">
+                {{ f['description'].value?.length || 0 }}/200 caracteres
+              </div>
+              <div *ngIf="f['description'].errors?.['maxlength'] && f['description'].touched" class="text-xs text-accent-danger">
+                Máximo 200 caracteres
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Medicine Selection -->
+        <div>
+          <label class="block text-sm font-medium text-text-secondary mb-2">
+            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+            </svg>
+            Medicamento
+          </label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-select formControlName="medicineId" class="modern-select">
+              <mat-option *ngFor="let medicine of medicines" [value]="medicine.id">
+                <div class="py-2">
+                  <div class="font-medium">{{ medicine.name }}</div>
+                  <div class="text-xs text-text-tertiary">{{ medicine.description }}</div>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="f['medicineId'].errors?.['required'] && f['medicineId'].touched">
+              Debe seleccionar un medicamento
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Date and Time Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-text-secondary mb-2">
+              <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Fecha y Hora de Inicio
+            </label>
+            <mat-form-field appearance="outline" class="w-full">
+              <input matInput [matDatepicker]="startPicker" formControlName="startDate" class="modern-input">
+              <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+              <mat-error *ngIf="f['startDate'].errors?.['required'] && f['startDate'].touched">
+                La fecha de inicio es obligatoria
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-text-secondary mb-2">
+              <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Fecha y Hora de Fin
+            </label>
+            <mat-form-field appearance="outline" class="w-full">
+              <input matInput [matDatepicker]="endPicker" formControlName="endDate" class="modern-input">
+              <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+              <mat-datepicker #endPicker></mat-datepicker>
+              <mat-error *ngIf="f['endDate'].errors?.['required'] && f['endDate'].touched">
+                La fecha de fin es obligatoria
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="badge-danger px-4 py-3 rounded-lg">
+          <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+            </svg>
+            <span>{{ errorMessage }}</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center justify-end space-x-3 pt-6 border-t border-dark-border">
+          <button
+            type="button"
+            mat-dialog-close
+            class="modern-btn-secondary"
+          >
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="modern-btn-primary"
+            [disabled]="loading || eventForm.invalid"
+          >
+            <span *ngIf="!loading" class="flex items-center">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              {{ isEditMode ? 'Actualizar' : 'Crear' }}
+            </span>
+            <span *ngIf="loading" class="flex items-center">
+              <span class="spinner mr-2"></span>
+              {{ isEditMode ? 'Actualizando...' : 'Creando...' }}
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-
-  <!-- Form -->
-  <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="space-y-5">
-    <!-- Title -->
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Título del Evento</mat-label>
-      <input matInput formControlName="title" placeholder="Ej: Toma de medicamento">
-      <mat-error *ngIf="f['title'].errors?.['required'] && f['title'].touched">
-        El título es obligatorio
-      </mat-error>
-    </mat-form-field>
-
-    <!-- Description -->
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Descripción (opcional)</mat-label>
-      <textarea matInput formControlName="description" rows="3" placeholder="Notas adicionales sobre el evento"></textarea>
-    </mat-form-field>
-
-    <!-- Medicine Selection -->
-    <mat-form-field appearance="outline" class="w-full">
-      <mat-label>Medicamento</mat-label>
-      <mat-select formControlName="medicineId">
-        <mat-option *ngFor="let medicine of medicines" [value]="medicine.id">
-          {{ medicine.name }}
-        </mat-option>
-      </mat-select>
-      <mat-error *ngIf="f['medicineId'].errors?.['required'] && f['medicineId'].touched">
-        Debe seleccionar un medicamento
-      </mat-error>
-    </mat-form-field>
-
-    <!-- Date and Time Row -->
-    <div class="grid grid-cols-2 gap-4">
-      <mat-form-field appearance="outline">
-        <mat-label>Fecha y Hora de Inicio</mat-label>
-        <input matInput [matDatepicker]="startPicker" formControlName="startDate">
-        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-        <mat-datepicker #startPicker></mat-datepicker>
-        <mat-error *ngIf="f['startDate'].errors?.['required'] && f['startDate'].touched">
-          La fecha de inicio es obligatoria
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Fecha y Hora de Fin</mat-label>
-        <input matInput [matDatepicker]="endPicker" formControlName="endDate">
-        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-        <mat-datepicker #endPicker></mat-datepicker>
-        <mat-error *ngIf="f['endDate'].errors?.['required'] && f['endDate'].touched">
-          La fecha de fin es obligatoria
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <!-- Error Message -->
-    <div *ngIf="errorMessage" class="badge-danger px-4 py-3 rounded-lg">
-      <div class="flex items-center">
-        <mat-icon class="mr-2">error</mat-icon>
-        <span>{{ errorMessage }}</span>
-      </div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="flex items-center justify-end space-x-3 pt-4 border-t border-dark-border">
-      <button
-        type="button"
-        mat-dialog-close
-        class="modern-btn-secondary"
-      >
-        <mat-icon class="mr-2">cancel</mat-icon>
-        Cancelar
-      </button>
-      <button
-        type="submit"
-        class="modern-btn-primary"
-        [disabled]="loading || eventForm.invalid"
-      >
-        <span *ngIf="!loading" class="flex items-center">
-          <mat-icon class="mr-2">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
-          {{ isEditMode ? 'Actualizar' : 'Crear' }}
-        </span>
-        <span *ngIf="loading" class="flex items-center">
-          <span class="spinner mr-2"></span>
-          {{ isEditMode ? 'Actualizando...' : 'Creando...' }}
-        </span>
-      </button>
-    </div>
-  </form>
 </div>

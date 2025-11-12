@@ -1,9 +1,40 @@
+/* Responsive Modal Container */
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%);
+}
+
 .event-form-container {
-  background: #1a1f2e;
+  background: transparent;
   color: #e5e7eb;
-  padding: 24px;
+  padding: 16px;
   border-radius: 12px;
-  max-width: 600px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Responsive breakpoints */
+@media (min-width: 640px) {
+  .event-form-container {
+    padding: 24px;
+    max-width: 600px;
+  }
+}
+
+@media (min-width: 768px) {
+  .event-form-container {
+    padding: 32px;
+    max-width: 700px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .event-form-container {
+    max-width: 800px;
+  }
 }
 
 /* Material Form Fields Dark Theme */
@@ -60,18 +91,59 @@
   background: #1a1f2e !important;
   border: 1px solid #2a2f3e !important;
   border-radius: 8px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
 }
 
 :host ::ng-deep .mat-mdc-option {
   color: #e5e7eb !important;
+  background: transparent !important;
+  transition: background-color 0.2s ease !important;
 }
 
 :host ::ng-deep .mat-mdc-option:hover {
-  background: #212631 !important;
+  background: rgba(102, 126, 234, 0.1) !important;
 }
 
 :host ::ng-deep .mat-mdc-option.mdc-list-item--selected {
   background: rgba(102, 126, 234, 0.2) !important;
+  color: #667eea !important;
+}
+
+:host ::ng-deep .mat-mdc-option .mdc-list-item__primary-text {
+  color: #e5e7eb !important;
+}
+
+:host ::ng-deep .mat-mdc-option .mdc-list-item__secondary-text {
+  color: #9ca3af !important;
+}
+
+/* Select Trigger */
+:host ::ng-deep .mat-mdc-select-trigger {
+  color: #e5e7eb !important;
+}
+
+:host ::ng-deep .mat-mdc-select-value {
+  color: #e5e7eb !important;
+}
+
+:host ::ng-deep .mat-mdc-select-placeholder {
+  color: #6b7280 !important;
+}
+
+:host ::ng-deep .mat-mdc-select-arrow {
+  color: #9ca3af !important;
+}
+
+/* Select Focus Styles */
+:host ::ng-deep .mat-mdc-select.mat-focused .mat-mdc-select-trigger {
+  border-color: #667eea !important;
+}
+
+:host ::ng-deep .mat-mdc-select.mat-focused .mdc-notched-outline__leading,
+:host ::ng-deep .mat-mdc-select.mat-focused .mdc-notched-outline__notch,
+:host ::ng-deep .mat-mdc-select.mat-focused .mdc-notched-outline__trailing {
+  border-color: #667eea !important;
+  border-width: 2px !important;
 }
 
 /* Datepicker Dark Theme */

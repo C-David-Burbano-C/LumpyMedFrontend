@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CalendarService } from '../../../services/calendar.service';
 import { MedicinesService } from '../../../services/medicines.service';
@@ -15,6 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-event-form',
@@ -28,7 +29,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule
   ],
   templateUrl: './event-form.component.html',
   styleUrl: './event-form.component.css'
@@ -58,13 +60,25 @@ export class EventFormComponent implements OnInit {
     this.loadMedicines();
   }
 
+  // Validador personalizado para no permitir solo espacios en blanco
+  noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    
+    const value = control.value.toString().trim();
+    if (value.length === 0) {
+      return { whitespace: true };
+    }
+    
+    return null;
+  }
+
   initForm(): void {
     const currentUser = this.authService.getCurrentUser();
     const startDate = this.selectedDate || new Date();
 
     this.eventForm = this.formBuilder.group({
-      title: [this.data.event?.title || '', [Validators.required]],
-      description: [this.data.event?.description || ''],
+      title: [this.data.event?.title || '', [Validators.required, this.noWhitespaceValidator, Validators.maxLength(50)]],
+      description: [this.data.event?.description || '', [Validators.maxLength(200)]],
       startDate: [this.data.event?.startDate ? new Date(this.data.event.startDate) : startDate, [Validators.required]],
       endDate: [this.data.event?.endDate ? new Date(this.data.event.endDate) : new Date(startDate.getTime() + 60 * 60 * 1000), [Validators.required]],
       medicineId: [this.data.event?.medicineId || null, [Validators.required]]
@@ -88,6 +102,10 @@ export class EventFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.eventForm.invalid) {
+      // Marcar todos los campos como touched para mostrar errores
+      Object.keys(this.eventForm.controls).forEach(key => {
+        this.eventForm.get(key)?.markAsTouched();
+      });
       return;
     }
 
@@ -98,8 +116,8 @@ export class EventFormComponent implements OnInit {
     const currentUser = this.authService.getCurrentUser();
 
     const eventData: CreateEventRequest = {
-      title: formValue.title,
-      description: formValue.description,
+      title: formValue.title.trim(),
+      description: formValue.description?.trim() || '',
       startDate: formValue.startDate.toISOString(),
       endDate: formValue.endDate.toISOString(),
       medicineId: formValue.medicineId,
