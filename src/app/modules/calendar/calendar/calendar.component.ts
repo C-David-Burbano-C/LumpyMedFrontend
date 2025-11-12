@@ -5,6 +5,8 @@ import { CalendarOptions } from '@fullcalendar/core';
 import { CalendarService } from '../../../services/calendar.service';
 import { MedicinesService } from '../../../services/medicines.service';
 import { AiService } from '../../../services/ai.service';
+import { AuthService } from '../../../services/auth.service';
+import { Router } from '@angular/router';
 import { CalendarEvent, CreateEventRequest, CalendarEventsResponse, CalendarFilters } from '../../../models/calendar.model';
 import { Medicine, MedicinePage } from '../../../models/medicine.model';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -44,11 +46,20 @@ export class CalendarComponent implements OnInit {
     private calendarService: CalendarService,
     private medicinesService: MedicinesService,
     private aiService: AiService,
+    private authService: AuthService,
+    private router: Router,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
+    // Verificar autenticación antes de cargar datos
+    if (!this.authService.isAuthenticated()) {
+      this.snackBar.open('Debes iniciar sesión para acceder al calendario', 'Cerrar', { duration: 3000 });
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.loadEvents();
     this.loadMedicines();
   }
@@ -66,7 +77,19 @@ export class CalendarComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.snackBar.open('Error al cargar eventos', 'Cerrar', { duration: 3000 });
+        console.error('Error loading events:', error);
+        let errorMessage = 'Error al cargar eventos';
+        
+        if (error.status === 403) {
+          errorMessage = 'No tienes permisos para acceder al calendario. Contacta al administrador.';
+        } else if (error.status === 401) {
+          errorMessage = 'Sesión expirada. Por favor, inicia sesión nuevamente.';
+          this.router.navigate(['/login']);
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        this.snackBar.open(errorMessage, 'Cerrar', { duration: 5000 });
         this.loading = false;
       }
     });
