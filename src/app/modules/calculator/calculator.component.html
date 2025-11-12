@@ -96,9 +96,10 @@
               {{ 'CALCULATOR.WEIGHT' | translate }} (kg)
             </label>
             <input 
-              type="number" 
+              type="text" 
               formControlName="weightKg" 
-              step="0.1"
+              maxlength="6"
+              pattern="[0-9]{1,4}(\.[0-9]{1,2})?"
               class="modern-input"
               placeholder="Peso del paciente"
             />
@@ -109,6 +110,10 @@
             <p *ngIf="f['weightKg'].errors?.['min'] && f['weightKg'].touched" 
                class="error-message">
               {{ 'VALIDATION.MIN_VALUE' | translate: {value: 0.1} }}
+            </p>
+            <p *ngIf="f['weightKg'].errors?.['maxDigits'] && f['weightKg'].touched" 
+               class="error-message">
+              El peso no puede tener más de 4 dígitos
             </p>
           </div>
 

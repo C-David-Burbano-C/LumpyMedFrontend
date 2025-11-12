@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, startWith, map } from 'rxjs';
 import { CalculatorService } from '../../services/calculator.service';
@@ -39,10 +39,26 @@ export class CalculatorComponent implements OnInit {
     this.loadMedicines();
   }
 
+  // Validador personalizado para máximo 4 dígitos
+  maxDigitsValidator(maxDigits: number) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) return null;
+      
+      const value = control.value.toString();
+      const integerPart = value.split('.')[0];
+      
+      if (integerPart.length > maxDigits) {
+        return { maxDigits: { requiredDigits: maxDigits, actualDigits: integerPart.length } };
+      }
+      
+      return null;
+    };
+  }
+
   initForm(): void {
     this.calculatorForm = this.formBuilder.group({
       medicineName: ['', [Validators.required]],
-      weightKg: ['', [Validators.required, Validators.min(0.1)]],
+      weightKg: ['', [Validators.required, Validators.min(0.1), this.maxDigitsValidator(4)]],
       userConcentrationMg: [''],
       userConcentrationMl: ['']
     });

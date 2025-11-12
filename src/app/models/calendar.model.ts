@@ -7,6 +7,8 @@ export interface CalendarEvent {
   medicineId: number;
   userId: number;
   aiSuggestion?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CreateEventRequest {
@@ -38,6 +40,7 @@ export interface AiSuggestionResponse {
   suggestion: string;
   optimalTimes: string[];
   warnings: string[];
+  confidence?: number;
 }
 
 export interface CalendarEventsResponse {
@@ -46,6 +49,10 @@ export interface CalendarEventsResponse {
   totalPages: number;
   size: number;
   number: number;
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
 }
 
 export interface CalendarFilters {

@@ -41,6 +41,8 @@ export class CalendarComponent implements OnInit {
   pageSize = 50;
   totalElements = 0;
   totalPages = 0;
+  currentUser: any;
+  isAdmin = false;
 
   constructor(
     private calendarService: CalendarService,
@@ -53,6 +55,10 @@ export class CalendarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Inicializar usuario actual y permisos
+    this.currentUser = this.authService.getCurrentUser();
+    this.isAdmin = this.currentUser?.role === 'ADMIN';
+
     // Verificar autenticación antes de cargar datos
     if (!this.authService.isAuthenticated()) {
       this.snackBar.open('Debes iniciar sesión para acceder al calendario', 'Cerrar', { duration: 3000 });
@@ -179,5 +185,9 @@ export class CalendarComponent implements OnInit {
     // Return different colors based on medicine
     const colors = ['#3788d8', '#fc6d26', '#7b64ff', '#00d4aa', '#ff6b6b'];
     return colors[(medicineId || 0) % colors.length];
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }
