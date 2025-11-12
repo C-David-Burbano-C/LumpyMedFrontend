@@ -60,11 +60,13 @@ export class AuthService {
       );
   }
 
-  register(userData: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${environment.apiUrl}/auth/register`, userData)
-      .pipe(
-        catchError(this.handleError)
-      );
+  register(userData: RegisterRequest): Observable<string> {
+    return this.http.post(`${environment.apiUrl}/auth/register`, userData, {
+      responseType: 'text'
+    }).pipe(
+      map(response => response as string),
+      catchError(this.handleError)
+    );
   }
 
   refreshToken(): Observable<RefreshTokenResponse> {

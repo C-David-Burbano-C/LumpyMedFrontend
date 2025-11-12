@@ -61,13 +61,14 @@ export class RegisterComponent implements OnInit {
     const { confirmPassword, ...registerData } = this.registerForm.value;
 
     this.authService.register(registerData).subscribe({
-      next: () => {
-        this.translate.get('AUTH.REGISTER_SUCCESS').subscribe((message: string) => {
-          this.successMessage = message;
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 2000);
-        });
+      next: (response: string) => {
+        this.loading = false;
+        // Mostrar mensaje de éxito simple
+        this.successMessage = 'Usuario registrado exitosamente';
+        // Redirigir al login después de 2 segundos
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);
       },
       error: (error) => {
         this.loading = false;
