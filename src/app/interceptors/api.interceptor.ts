@@ -38,7 +38,8 @@ export class ApiInterceptor implements HttpInterceptor {
           // Token expirado o inválido
           localStorage.removeItem(environment.tokenKey);
           localStorage.removeItem(environment.userKey);
-          this.router.navigate(['/login']);
+          // Recargar la página completamente para limpiar el estado
+          window.location.href = '/login';
         }
         return throwError(() => error);
       })

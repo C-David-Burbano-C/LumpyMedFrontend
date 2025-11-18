@@ -285,3 +285,14 @@
   --mdc-filled-text-field-label-text-color: #a1a1a1;
   --mdc-filled-text-field-input-text-color: #ededed;
 }
+
+/* Custom Dialog Styles */
+.custom-dialog-container .mat-mdc-dialog-container {
+  padding: 0;
+  background: transparent;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.custom-dialog-container .mat-mdc-dialog-surface {
+  background: transparent;
+}

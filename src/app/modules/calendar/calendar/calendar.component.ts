@@ -63,7 +63,8 @@ export class CalendarComponent implements OnInit {
     // Verificar autenticación antes de cargar datos
     if (!this.authService.isAuthenticated()) {
       this.snackBar.open('Debes iniciar sesión para acceder al calendario', 'Cerrar', { duration: 3000 });
-      this.router.navigate(['/login']);
+      // Recargar la página completamente para limpiar el estado
+      window.location.href = '/login';
       return;
     }
 
@@ -91,7 +92,8 @@ export class CalendarComponent implements OnInit {
           errorMessage = 'No tienes permisos para acceder al calendario. Contacta al administrador.';
         } else if (error.status === 401) {
           errorMessage = 'Sesión expirada. Por favor, inicia sesión nuevamente.';
-          this.router.navigate(['/login']);
+          // Recargar la página completamente para limpiar el estado
+          window.location.href = '/login';
         } else if (error.message) {
           errorMessage = error.message;
         }

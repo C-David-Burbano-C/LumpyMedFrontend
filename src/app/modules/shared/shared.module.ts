@@ -1,15 +1,21 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule } from '@angular/material/dialog';
+import { LogoutConfirmationDialogComponent } from './logout-confirmation-dialog/logout-confirmation-dialog.component';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    LogoutConfirmationDialogComponent
+  ],
   imports: [
     CommonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatDialogModule
   ],
   exports: [
-    MatTooltipModule
+    MatTooltipModule,
+    MatDialogModule
   ]
 })
 export class SharedModule { }

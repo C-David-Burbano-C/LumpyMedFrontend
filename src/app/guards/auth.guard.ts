@@ -22,9 +22,8 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
-    this.router.navigate(['/login'], {
-      queryParams: { returnUrl: state.url }
-    });
+    // Recargar la página completamente para limpiar cualquier estado residual
+    window.location.href = '/login';
     return false;
   }
 }

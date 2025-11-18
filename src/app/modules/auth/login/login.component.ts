@@ -24,12 +24,19 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Si ya está autenticado, redirigir a calculator
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/calculator']);
+      return;
+    }
+
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required]],
       password: ['', [Validators.required]]
     });
 
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/calculator';
+    // Siempre redirigir a calculator después del login
+    this.returnUrl = '/calculator';
   }
 
   get f() {

@@ -3,8 +3,10 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { catchError, map, tap, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../environments/environment';
 import { User, LoginRequest, RegisterRequest, AuthResponse, RegisterResponse, RefreshTokenResponse, UserProfile } from '../models/user.model';
+import { LogoutConfirmationDialogComponent } from '../modules/shared/logout-confirmation-dialog/logout-confirmation-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,8 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {
     const storedUser = localStorage.getItem(environment.userKey);
     this.currentUserSubject = new BehaviorSubject<User | null>(
@@ -80,10 +83,22 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(environment.tokenKey);
-    localStorage.removeItem(environment.userKey);
-    this.currentUserSubject.next(null);
-    this.router.navigate(['/login']);
+    const dialogRef = this.dialog.open(LogoutConfirmationDialogComponent, {
+      width: '400px',
+      maxWidth: '90vw',
+      disableClose: false,
+      panelClass: 'custom-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        localStorage.removeItem(environment.tokenKey);
+        localStorage.removeItem(environment.userKey);
+        this.currentUserSubject.next(null);
+        // Recargar la página completamente para limpiar el estado
+        window.location.href = '/login';
+      }
+    });
   }
 
   isAuthenticated(): boolean {
