@@ -26,7 +26,7 @@ export class MedicineFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.medicineForm = this.formBuilder.group({
-      name: [this.data.medicine?.name || '', [Validators.required]],
+      name: [this.data.medicine?.name || '', [Validators.required, Validators.maxLength(20)]],
       description: [this.data.medicine?.description || ''],
       mgKgDay: [this.data.medicine?.mgKgDay || null, [Validators.required, Validators.min(0)]],
       dosesPerDay: [this.data.medicine?.dosesPerDay || null, [Validators.required, Validators.min(1)]],

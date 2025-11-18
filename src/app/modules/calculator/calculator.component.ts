@@ -57,8 +57,8 @@ export class CalculatorComponent implements OnInit {
 
   initForm(): void {
     this.calculatorForm = this.formBuilder.group({
-      medicineName: ['', [Validators.required]],
-      weightKg: ['', [Validators.required, Validators.min(0.1), this.maxDigitsValidator(4)]],
+      medicineName: ['', [Validators.required, Validators.maxLength(20)]],
+      weightKg: ['', [Validators.required, Validators.min(0.1), Validators.maxLength(3)]],
       userConcentrationMg: [''],
       userConcentrationMl: ['']
     });
@@ -129,6 +129,18 @@ export class CalculatorComponent implements OnInit {
 
     this.calculatorService.calculateDose(request).subscribe({
       next: (result) => {
+        // Fix: Backend returns medicine as string, find the complete medicine object
+        if (typeof result.medicine === 'string') {
+          const medicineName = result.medicine;
+          const completeMedicine = this.medicines.find(m => m.name === medicineName);
+          if (completeMedicine) {
+            result.medicine = completeMedicine;
+          } else {
+            // If medicine not found, create a minimal object with the name
+            result.medicine = { name: medicineName } as unknown as Medicine;
+          }
+        }
+
         this.doseResult = result;
         this.loading = false;
       },

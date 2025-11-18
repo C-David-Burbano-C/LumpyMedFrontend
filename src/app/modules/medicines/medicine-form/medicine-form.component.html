@@ -31,12 +31,17 @@
       <input 
         type="text" 
         formControlName="name"
+        maxlength="20"
         class="modern-input"
         placeholder="Nombre del medicamento"
       />
       <p *ngIf="f['name'].errors?.['required'] && f['name'].touched" 
          class="error-message">
         {{ 'VALIDATION.REQUIRED' | translate }}
+      </p>
+      <p *ngIf="f['name'].errors?.['maxlength'] && f['name'].touched" 
+         class="error-message">
+        El nombre no puede exceder 20 caracteres
       </p>
     </div>
 
