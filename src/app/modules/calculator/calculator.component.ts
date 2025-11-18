@@ -5,6 +5,7 @@ import { Observable, startWith, map } from 'rxjs';
 import { CalculatorService } from '../../services/calculator.service';
 import { MedicinesService } from '../../services/medicines.service';
 import { AuthService } from '../../services/auth.service';
+import { AiService, MedicalAdviceRequest, AiResponse } from '../../services/ai.service';
 import { DoseResponse } from '../../models/dose.model';
 import { Medicine } from '../../models/medicine.model';
 
@@ -24,11 +25,17 @@ export class CalculatorComponent implements OnInit {
   currentUser: any;
   isAdmin = false;
 
+  // AI Advice properties
+  aiAdvice: AiResponse | null = null;
+  aiLoading = false;
+  aiError = '';
+
   constructor(
     private formBuilder: FormBuilder,
     private calculatorService: CalculatorService,
     private medicinesService: MedicinesService,
     private authService: AuthService,
+    private aiService: AiService,
     private translate: TranslateService
   ) {}
 
@@ -143,10 +150,42 @@ export class CalculatorComponent implements OnInit {
 
         this.doseResult = result;
         this.loading = false;
+
+        // Generate AI advice after successful calculation
+        this.generateAiAdvice(result);
       },
       error: (error) => {
         this.errorMessage = error.message;
         this.loading = false;
+      }
+    });
+  }
+
+  generateAiAdvice(doseResult: DoseResponse): void {
+    this.aiLoading = true;
+    this.aiError = '';
+    this.aiAdvice = null;
+
+    const adviceRequest: MedicalAdviceRequest = {
+      medicineName: doseResult.medicine?.name || 'Medicamento desconocido',
+      patientWeight: doseResult.weightKg,
+      dailyDose: doseResult.mgPerDay,
+      dosesPerDay: doseResult.dosesPerDay,
+      dosePerAdministration: doseResult.mgPerDose,
+      volumePerDose: doseResult.mlPerDose,
+      safeRange: doseResult.safeRange,
+      alert: doseResult.alert,
+      medicineDescription: doseResult.medicine?.description
+    };
+
+    this.aiService.generateMedicalAdvice(adviceRequest).subscribe({
+      next: (advice) => {
+        this.aiAdvice = advice;
+        this.aiLoading = false;
+      },
+      error: (error) => {
+        this.aiError = error.message;
+        this.aiLoading = false;
       }
     });
   }
