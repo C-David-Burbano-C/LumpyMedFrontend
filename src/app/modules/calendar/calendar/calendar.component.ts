@@ -127,6 +127,7 @@ export class CalendarComponent implements OnInit {
   openCreateEventDialog(): void {
     const dialogRef = this.dialog.open(EventFormComponent, {
       width: '600px',
+      height: '90vh',
       data: {
         medicines: this.medicines,
         event: null // null indica que es creación

@@ -6,8 +6,7 @@ import { RoleGuard } from './guards/role.guard';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/calculator',
-    pathMatch: 'full'
+    loadChildren: () => import('./modules/landing/landing.module').then(m => m.LandingModule)
   },
   {
     path: 'login',

@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatDateRangePicker, MatDateRangeInput } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Observable, startWith, map, of } from 'rxjs';
@@ -32,7 +33,9 @@ import { Observable, startWith, map, of } from 'rxjs';
     MatDatepickerModule,
     MatNativeDateModule,
     MatIconModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatDateRangePicker,
+    MatDateRangeInput
   ],
   templateUrl: './event-form.component.html',
   styleUrl: './event-form.component.css'
@@ -77,6 +80,23 @@ export class EventFormComponent implements OnInit {
     return null;
   }
 
+  // Validador personalizado para rango de fechas: end debe ser posterior a start
+  dateRangeValidator(control: AbstractControl): ValidationErrors | null {
+    const start = control.get('start')?.value;
+    const end = control.get('end')?.value;
+
+    if (!start || !end) return null;
+
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    if (endDate <= startDate) {
+      return { dateRangeInvalid: true };
+    }
+
+    return null;
+  }
+
   initForm(): void {
     const currentUser = this.authService.getCurrentUser();
     const startDate = this.selectedDate || new Date();
@@ -84,8 +104,10 @@ export class EventFormComponent implements OnInit {
     this.eventForm = this.formBuilder.group({
       title: [this.data.event?.title || '', [Validators.required, this.noWhitespaceValidator, Validators.maxLength(50)]],
       description: [this.data.event?.description || '', [Validators.maxLength(200)]],
-      startDate: [this.data.event?.startDate ? new Date(this.data.event.startDate) : startDate, [Validators.required]],
-      endDate: [this.data.event?.endDate ? new Date(this.data.event.endDate) : new Date(startDate.getTime() + 60 * 60 * 1000), [Validators.required]]
+      dateRange: this.formBuilder.group({
+        start: [this.data.event?.startDate ? new Date(this.data.event.startDate) : startDate, [Validators.required]],
+        end: [this.data.event?.endDate ? new Date(this.data.event.endDate) : new Date(startDate.getTime() + 60 * 60 * 1000), [Validators.required]]
+      }, { validators: this.dateRangeValidator })
     });
 
     // Inicializar medicamentos seleccionados si estamos editando
@@ -119,6 +141,24 @@ export class EventFormComponent implements OnInit {
 
   get f() {
     return this.eventForm.controls;
+  }
+
+  get dateRangeFormGroup(): FormGroup {
+    return this.eventForm.get('dateRange') as FormGroup;
+  }
+
+  get isFormValid(): boolean {
+    // Verificar validación del formulario
+    if (this.eventForm.invalid) return false;
+
+    // Verificar selección de medicamentos
+    if (this.selectedMedicines.length === 0) return false;
+
+    // Verificar validación de rango de fechas
+    const dateRange = this.eventForm.get('dateRange');
+    if (dateRange?.invalid) return false;
+
+    return true;
   }
 
   private _findMedicineById(medicineId: number): Medicine | null {
@@ -175,6 +215,28 @@ export class EventFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    // Forzar validación de todos los campos
+    Object.keys(this.eventForm.controls).forEach(key => {
+      const control = this.eventForm.get(key);
+      control?.markAsTouched();
+      control?.updateValueAndValidity();
+
+      // Si es el grupo de rango de fechas, validar sus controles internos
+      if (key === 'dateRange' && control instanceof FormGroup) {
+        Object.keys(control.controls).forEach(subKey => {
+          control.get(subKey)?.markAsTouched();
+          control.get(subKey)?.updateValueAndValidity();
+        });
+      }
+    });
+
+    // Validación adicional para rango de fechas
+    const dateRange = this.eventForm.get('dateRange');
+    if (dateRange?.invalid) {
+      this.errorMessage = 'La fecha de fin debe ser posterior a la fecha de inicio';
+      return;
+    }
+
     if (this.eventForm.invalid || this.selectedMedicines.length === 0) {
       // Marcar todos los campos como touched para mostrar errores
       Object.keys(this.eventForm.controls).forEach(key => {
@@ -201,8 +263,8 @@ export class EventFormComponent implements OnInit {
       const eventData: CreateEventRequest = {
         title: formValue.title.trim(),
         description: formValue.description?.trim() || '',
-        startDate: formValue.startDate.toISOString(),
-        endDate: formValue.endDate.toISOString(),
+        startDate: formValue.dateRange.start.toISOString(),
+        endDate: formValue.dateRange.end.toISOString(),
         medicineId: medicine.id,
         userId: currentUser?.id || 1
       };

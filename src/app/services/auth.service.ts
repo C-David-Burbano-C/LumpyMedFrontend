@@ -96,7 +96,7 @@ export class AuthService {
         localStorage.removeItem(environment.userKey);
         this.currentUserSubject.next(null);
         // Recargar la página completamente para limpiar el estado
-        window.location.href = '/login';
+        window.location.href = '/';
       }
     });
   }

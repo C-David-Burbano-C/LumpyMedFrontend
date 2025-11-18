@@ -1,0 +1,226 @@
+<div class="min-h-screen bg-dark-bg text-text-primary relative overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-mesh opacity-70"></div>
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(76,110,245,0.15),_transparent_55%)]"></div>
+  <div class="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_top,_rgba(31,182,199,0.12),_transparent_60%)] blur-3xl"></div>
+
+  <div class="relative z-10 min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="glass-effect border-b border-dark-border/70">
+      <div class="modern-container py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-center space-x-3">
+          <div class="p-2 bg-dark-elevated border border-dark-border rounded-xl">
+            <img src="assets/logo.svg" alt="LumpyMed" class="w-8 h-8" />
+          </div>
+          <div>
+            <p class="text-sm text-text-secondary uppercase tracking-widest">LumpyMed</p>
+            <h1 class="text-2xl font-semibold">Inteligencia clínica en cada dosis</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <a *ngIf="!isLoggedIn" routerLink="/calendar" class="hidden md:inline-flex modern-btn-secondary">Ver calendario</a>
+          <a *ngIf="!isLoggedIn" routerLink="/login/register" class="modern-btn-secondary">Crear cuenta</a>
+          <a *ngIf="!isLoggedIn" routerLink="/login" class="modern-btn-primary">Ingresar</a>
+          
+          <div *ngIf="isLoggedIn" class="flex items-center gap-3">
+            <span class="text-sm text-text-secondary">Bienvenido de vuelta</span>
+            <button (click)="goToCalculator()" class="modern-btn-primary">Ir al sistema</button>
+            <button (click)="logout()" class="modern-btn-secondary">Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+      <!-- Welcome Back Section for Logged Users -->
+      <section *ngIf="isLoggedIn" class="modern-container py-16 lg:py-24">
+        <div class="max-w-4xl mx-auto text-center space-y-8">
+          <div class="p-8 bg-gradient-to-br from-accent-primary/10 to-accent-purple/10 border border-accent-primary/20 rounded-2xl">
+            <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-accent-primary to-accent-purple rounded-2xl flex items-center justify-center">
+              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h2 class="text-3xl font-bold mb-4">¡Bienvenido de vuelta!</h2>
+            <p class="text-text-secondary text-lg mb-8">
+              Tu sesión está activa. Accede rápidamente a tus herramientas de cálculo pediátrico.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <button (click)="goToCalculator()" class="modern-btn-primary text-center">
+                <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                </svg>
+                Ir a la calculadora
+              </button>
+              <a routerLink="/calendar" class="modern-btn-secondary text-center">
+                <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                Ver calendario
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Full Landing Content for Non-Logged Users -->
+      <div *ngIf="!isLoggedIn">
+        <!-- Hero -->
+        <section class="modern-container py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6 animate-slide-up">
+          <span class="inline-flex items-center px-3 py-1 rounded-full bg-accent-primary/10 text-accent-primary text-xs font-semibold tracking-widest">
+            Salud pediátrica segura
+          </span>
+          <div>
+            <h2 class="text-4xl lg:text-5xl font-bold leading-tight gradient-text">
+              Calculadora pediátrica, agenda clínica y consejos de IA en un solo lugar
+            </h2>
+            <p class="mt-4 text-text-secondary text-lg">
+              Automatiza cálculos de dosis, organiza tratamientos y recibe recomendaciones inteligentes basadas en bases de datos farmacológicas oficiales. Diseñado para pediatras, clínicas y cuidadores exigentes.
+            </p>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="p-4 rounded-2xl bg-dark-elevated border border-dark-border/70">
+              <p class="text-sm text-text-tertiary uppercase tracking-widest mb-1">Seguridad</p>
+              <p class="text-2xl font-semibold">Alertas instantáneas</p>
+              <p class="text-sm text-text-secondary">Valida rangos seguros y recibe avisos antes de administrar.</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-dark-elevated border border-dark-border/70">
+              <p class="text-sm text-text-tertiary uppercase tracking-widest mb-1">Productividad</p>
+              <p class="text-2xl font-semibold">Recordatorios inteligentes</p>
+              <p class="text-sm text-text-secondary">Agenda medicaciones y comparte seguimientos con todo el equipo.</p>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a routerLink="/login" class="modern-btn-primary text-center">
+              Comenzar ahora
+            </a>
+            <a routerLink="/login/register" class="modern-btn-secondary text-center">
+              Solicitar acceso demo
+            </a>
+          </div>
+          <div class="flex flex-wrap gap-6 text-sm text-text-tertiary">
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-accent-primary"></span>
+              <span>Encriptado extremo a extremo</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-accent-purple"></span>
+              <span>Aprobado por pediatras</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="w-2 h-2 rounded-full bg-accent-success"></span>
+              <span>24/7 disponible en la nube</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Card -->
+        <div class="relative animate-fade-in">
+          <div class="absolute -inset-6 bg-gradient-to-br from-accent-primary/20 via-accent-purple/10 to-transparent blur-3xl"></div>
+          <div class="relative modern-card space-y-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm text-text-tertiary">Paciente</p>
+                <p class="text-xl font-semibold">Sofía Manta</p>
+              </div>
+              <span class="px-3 py-1 text-xs rounded-full bg-accent-primary/10 text-accent-primary">En tratamiento</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-4 bg-dark-hover rounded-xl border border-dark-border/70">
+                <p class="text-xs text-text-tertiary">Peso</p>
+                <p class="text-2xl font-bold">14.8 kg</p>
+              </div>
+              <div class="p-4 bg-dark-hover rounded-xl border border-dark-border/70">
+                <p class="text-xs text-text-tertiary">Frecuencia</p>
+                <p class="text-2xl font-bold">3 dosis/día</p>
+              </div>
+              <div class="p-4 bg-dark-hover rounded-xl border border-dark-border/70">
+                <p class="text-xs text-text-tertiary">Dosis segura</p>
+                <p class="text-2xl font-bold text-accent-success">9.6 ml</p>
+              </div>
+              <div class="p-4 bg-dark-hover rounded-xl border border-dark-border/70">
+                <p class="text-xs text-text-tertiary">IA Advisory</p>
+                <p class="text-sm text-text-secondary">Sin contraindicaciones reportadas</p>
+              </div>
+            </div>
+            <div class="border border-dark-border rounded-xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <p class="text-sm text-text-tertiary">Próxima administración</p>
+                <span class="text-xs text-accent-primary">En 1h 20m</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="w-2 h-2 rounded-full bg-accent-success"></span>
+                  <p class="text-sm">Ibuprofeno pediátrico</p>
+                </div>
+                <p class="text-sm text-text-secondary">160 mg / 5 ml</p>
+              </div>
+              <button class="w-full modern-btn-secondary">
+                Ver más detalles
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Benefits -->
+      <section class="modern-container py-12">
+        <div class="text-center max-w-3xl mx-auto mb-12">
+          <p class="text-sm tracking-[0.3em] text-accent-primary uppercase">BENEFICIOS CLAVE</p>
+          <h3 class="text-3xl font-bold mt-4">Moderniza la manera en la que cuidas a tus pacientes</h3>
+          <p class="text-text-secondary mt-4">Integra protocolos, evita errores de cálculo y comparte información fiable en todo tu equipo clínico.</p>
+        </div>
+        <div class="grid gap-6 md:grid-cols-3">
+          <div *ngFor="let benefit of benefits" class="modern-card">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent-primary/20 to-accent-purple/20 flex items-center justify-center mb-4">
+              <span class="text-2xl">✨</span>
+            </div>
+            <h4 class="text-xl font-semibold mb-2">{{ benefit.title }}</h4>
+            <p class="text-text-secondary">{{ benefit.description }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="modern-container py-16">
+        <div class="modern-card bg-gradient-to-br from-accent-primary/10 to-accent-purple/10 border-accent-primary/20 text-center space-y-6">
+          <p class="text-sm text-text-tertiary tracking-[0.3em] uppercase">listo para comenzar</p>
+          <h3 class="text-3xl font-bold">Crea una cuenta y conecta tus cálculos con todo tu equipo</h3>
+          <p class="text-text-secondary max-w-3xl mx-auto">
+            Pruébalo sin costo. Configura medicamentos, agendas y controla todo desde un dashboard diseñado para el día a día clínico.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a routerLink="/login" class="modern-btn-primary text-center">Entrar al sistema</a>
+            <a routerLink="/login/register" class="modern-btn-secondary text-center">Solicitar invitación</a>
+          </div>
+        </div>
+      </section>
+      <section class="modern-container py-16">
+        <div class="modern-card bg-gradient-to-br from-accent-primary/10 to-accent-purple/10 border-accent-primary/20 text-center space-y-6">
+          <p class="text-sm text-text-tertiary tracking-[0.3em] uppercase">listo para comenzar</p>
+          <h3 class="text-3xl font-bold">Crea una cuenta y conecta tus cálculos con todo tu equipo</h3>
+          <p class="text-text-secondary max-w-3xl mx-auto">
+            Pruébalo sin costo. Configura medicamentos, agendas y controla todo desde un dashboard diseñado para el día a día clínico.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a routerLink="/login" class="modern-btn-primary text-center">Entrar al sistema</a>
+            <a routerLink="/login/register" class="modern-btn-secondary text-center">Solicitar invitación</a>
+          </div>
+        </div>
+      </section>
+      </div> <!-- End of *ngIf="!isLoggedIn" -->
+    </main>
+
+    <footer class="border-t border-dark-border/70">
+      <div class="modern-container py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-sm text-text-tertiary">
+        <p>© {{ currentYear }} LumpyMed. Plataforma avanzada de dosificación pediátrica.</p>
+        <div class="flex items-center gap-3">
+          <span>Privacidad</span>
+          <span>Soporte</span>
+          <span>Documentación</span>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>

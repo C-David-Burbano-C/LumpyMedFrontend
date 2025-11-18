@@ -1,0 +1,49 @@
+.modern-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.glass-effect {
+  backdrop-filter: blur(20px);
+  background-color: rgba(12, 14, 24, 0.75);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #7dd3fc, #c084fc, #f472b6);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.7s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.9s ease forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
