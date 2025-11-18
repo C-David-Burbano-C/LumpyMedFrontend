@@ -7,7 +7,8 @@ import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
+  host: { class: 'block min-h-screen' }
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;

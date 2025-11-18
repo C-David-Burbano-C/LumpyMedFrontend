@@ -38,6 +38,7 @@
   "MEDICINES": {
     "TITLE": "Gestión de Medicamentos",
     "ADD": "Agregar Medicamento",
+    "ADD_NEW": "Agregar Nuevo Medicamento",
     "EDIT": "Editar Medicamento",
     "DELETE": "Eliminar Medicamento",
     "NAME": "Nombre",

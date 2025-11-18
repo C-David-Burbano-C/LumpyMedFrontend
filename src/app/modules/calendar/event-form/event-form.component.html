@@ -1,7 +1,7 @@
-<div class="min-h-screen bg-dark-bg p-6">
+<div class="max-h-[80vh] bg-dark-bg p-8 overflow-y-auto">
   <div class="max-w-2xl mx-auto">
     <!-- Header -->
-    <div class="flex items-center justify-center mb-6">
+    <div class="flex items-center justify-center mb-6 ">
       <div class="flex items-center space-x-3">
         <div class="p-3 bg-gradient-to-br from-accent-primary to-accent-purple rounded-xl">
           <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Form Card -->
-    <div class="modern-card">
+    <div class="modern-card p-6">
       <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="space-y-6">
         <!-- Title Input -->
         <div>
@@ -63,7 +63,7 @@
             <input
               type="text"
               formControlName="description"
-              maxlength="200"
+              maxlength="100"
               class="modern-input"
               placeholder="Notas adicionales sobre el evento"
               [matTooltip]="f['description'].value || 'Sin descripción'"
@@ -72,10 +72,10 @@
             />
             <div class="flex justify-between items-center mt-1">
               <div class="text-xs text-text-tertiary">
-                {{ f['description'].value?.length || 0 }}/200 caracteres
+                {{ f['description'].value?.length || 0 }}/100 caracteres
               </div>
               <div *ngIf="f['description'].errors?.['maxlength'] && f['description'].touched" class="text-xs text-accent-danger">
-                Máximo 200 caracteres
+                Máximo 100 caracteres
               </div>
             </div>
           </div>

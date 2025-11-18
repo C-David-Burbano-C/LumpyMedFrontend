@@ -100,6 +100,11 @@ export class AiService {
       : `No se encontró evidencia farmacológica confiable para "${request.medicineName}". Si el medicamento no es reconocible, deja las listas vacías y explica en "observaciones" que no hay información verificada.
 `;
 
+    // Nota: La información farmacológica se obtiene investigando en bases de datos públicas como RxNav (NIH):
+    // - Mecanismo: Describe cómo actúa el medicamento en el cuerpo (ej. inhibidor de COX-2)
+    // - Indicaciones: Para qué sirve el medicamento (ej. tratamiento de fiebre, dolor, inflamación)
+    // - Contraindicaciones: Cuándo NO usar el medicamento (ej. alergia al principio activo, embarazo)
+
     return `Eres un asistente médico pediátrico. Cruza la dosis calculada con la información oficial del fármaco y prioriza la seguridad.
 
 Datos del caso:

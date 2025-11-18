@@ -12,7 +12,8 @@ import { Medicine } from '../../models/medicine.model';
 @Component({
   selector: 'app-calculator',
   templateUrl: './calculator.component.html',
-  styleUrls: ['./calculator.component.css']
+  styleUrls: ['./calculator.component.css'],
+  host: { class: 'block' }
 })
 export class CalculatorComponent implements OnInit {
   calculatorForm!: FormGroup;

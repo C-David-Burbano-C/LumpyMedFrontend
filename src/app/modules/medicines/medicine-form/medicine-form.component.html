@@ -1,4 +1,4 @@
-<div class="bg-dark-bg">
+<div class="max-h-[80vh] bg-dark-bg p-8 overflow-y-auto">
   <!-- Dialog Header -->
   <div class="flex items-center justify-between mb-6 pb-4 border-b border-dark-border">
     <div class="flex items-center space-x-3">
@@ -53,12 +53,17 @@
       <textarea 
         formControlName="description"
         rows="2"
+        maxlength="100"
         class="modern-input resize-none"
         placeholder="Descripción del medicamento"
       ></textarea>
       <p *ngIf="f['description'].errors?.['required'] && f['description'].touched" 
          class="error-message">
         {{ 'VALIDATION.REQUIRED' | translate }}
+      </p>
+      <p *ngIf="f['description'].errors?.['maxlength'] && f['description'].touched" 
+         class="error-message">
+        La descripción no puede exceder 100 caracteres
       </p>
     </div>
 
@@ -72,12 +77,18 @@
           type="number" 
           formControlName="mgKgDay"
           step="0.01"
+          maxlength="4"
+          (input)="limitInput('mgKgDay', 4)"
           class="modern-input"
           placeholder="60.00"
         />
         <p *ngIf="f['mgKgDay'].errors?.['required'] && f['mgKgDay'].touched" 
            class="error-message">
           {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+        <p *ngIf="f['mgKgDay'].errors?.['maxlength'] && f['mgKgDay'].touched" 
+           class="error-message">
+          Máximo 4 caracteres
         </p>
       </div>
 
@@ -88,12 +99,18 @@
         <input 
           type="number" 
           formControlName="dosesPerDay"
+          maxlength="2"
+          (input)="limitInput('dosesPerDay', 2)"
           class="modern-input"
           placeholder="4"
         />
         <p *ngIf="f['dosesPerDay'].errors?.['required'] && f['dosesPerDay'].touched" 
            class="error-message">
           {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+        <p *ngIf="f['dosesPerDay'].errors?.['maxlength'] && f['dosesPerDay'].touched" 
+           class="error-message">
+          Máximo 2 caracteres
         </p>
       </div>
     </div>
@@ -108,12 +125,18 @@
           type="number" 
           formControlName="concentrationMg"
           step="0.01"
+          maxlength="4"
+          (input)="limitInput('concentrationMg', 4)"
           class="modern-input"
           placeholder="160.00"
         />
         <p *ngIf="f['concentrationMg'].errors?.['required'] && f['concentrationMg'].touched" 
            class="error-message">
           {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+        <p *ngIf="f['concentrationMg'].errors?.['maxlength'] && f['concentrationMg'].touched" 
+           class="error-message">
+          Máximo 4 caracteres
         </p>
       </div>
 
@@ -125,12 +148,18 @@
           type="number" 
           formControlName="concentrationMl"
           step="0.01"
+          maxlength="4"
+          (input)="limitInput('concentrationMl', 4)"
           class="modern-input"
           placeholder="5.00"
         />
         <p *ngIf="f['concentrationMl'].errors?.['required'] && f['concentrationMl'].touched" 
            class="error-message">
           {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+        <p *ngIf="f['concentrationMl'].errors?.['maxlength'] && f['concentrationMl'].touched" 
+           class="error-message">
+          Máximo 4 caracteres
         </p>
       </div>
     </div>
@@ -145,12 +174,18 @@
           type="number" 
           formControlName="minSafeMl"
           step="0.01"
+          maxlength="4"
+          (input)="limitInput('minSafeMl', 4)"
           class="modern-input"
           placeholder="5.00"
         />
         <p *ngIf="f['minSafeMl'].errors?.['required'] && f['minSafeMl'].touched" 
            class="error-message">
           {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+        <p *ngIf="f['minSafeMl'].errors?.['maxlength'] && f['minSafeMl'].touched" 
+           class="error-message">
+          Máximo 4 caracteres
         </p>
       </div>
 
@@ -162,12 +197,18 @@
           type="number" 
           formControlName="maxSafeMl"
           step="0.01"
+          maxlength="4"
+          (input)="limitInput('maxSafeMl', 4)"
           class="modern-input"
           placeholder="10.00"
         />
         <p *ngIf="f['maxSafeMl'].errors?.['required'] && f['maxSafeMl'].touched" 
            class="error-message">
           {{ 'VALIDATION.REQUIRED' | translate }}
+        </p>
+        <p *ngIf="f['maxSafeMl'].errors?.['maxlength'] && f['maxSafeMl'].touched" 
+           class="error-message">
+          Máximo 4 caracteres
         </p>
       </div>
     </div>
@@ -206,7 +247,7 @@
           {{ isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.SAVE' | translate) }}
         </span>
         <span *ngIf="loading" class="flex items-center">
-          <span class="spinner mr-2"></span>
+          <div class="animate-spin rounded-full h-4 w-4 border-2 border-accent-primary border-t-transparent mr-2"></div>
           {{ 'COMMON.LOADING' | translate }}
         </span>
       </button>

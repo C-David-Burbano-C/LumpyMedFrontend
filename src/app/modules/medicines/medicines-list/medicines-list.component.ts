@@ -9,7 +9,8 @@ import { MedicineFormComponent } from '../medicine-form/medicine-form.component'
 @Component({
   selector: 'app-medicines-list',
   templateUrl: './medicines-list.component.html',
-  styleUrls: ['./medicines-list.component.css']
+  styleUrls: ['./medicines-list.component.css'],
+  host: { class: 'block' }
 })
 export class MedicinesListComponent implements OnInit {
   medicines: Medicine[] = [];

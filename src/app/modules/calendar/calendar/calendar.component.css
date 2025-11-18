@@ -104,6 +104,11 @@
   border-radius: 12px 12px 0 0;
 }
 
+:host ::ng-deep .fc-toolbar-chunk:last-child {
+  display: flex;
+  gap: 1rem;
+}
+
 :host ::ng-deep .fc-toolbar-title {
   color: #e5e7eb !important;
   font-weight: 600;

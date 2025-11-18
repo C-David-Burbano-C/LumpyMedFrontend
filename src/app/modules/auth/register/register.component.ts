@@ -7,7 +7,8 @@ import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.css'],
+  host: { class: 'block min-h-screen' }
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
