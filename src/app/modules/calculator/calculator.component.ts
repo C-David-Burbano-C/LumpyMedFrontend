@@ -66,7 +66,7 @@ export class CalculatorComponent implements OnInit {
   initForm(): void {
     this.calculatorForm = this.formBuilder.group({
       medicineName: ['', [Validators.required, Validators.maxLength(20)]],
-      weightKg: ['', [Validators.required, Validators.min(0.1), Validators.maxLength(3)]],
+      weightKg: ['', [Validators.required, Validators.min(0.1), Validators.maxLength(2)]],
       userConcentrationMg: [''],
       userConcentrationMl: ['']
     });
@@ -193,6 +193,16 @@ export class CalculatorComponent implements OnInit {
 
   get f() {
     return this.calculatorForm.controls;
+  }
+
+  limitInput(controlName: string, maxLength: number): void {
+    const control = this.calculatorForm.get(controlName);
+    if (control) {
+      const value = control.value?.toString() || '';
+      if (value.length > maxLength) {
+        control.setValue(value.substring(0, maxLength));
+      }
+    }
   }
 
   retry(): void {

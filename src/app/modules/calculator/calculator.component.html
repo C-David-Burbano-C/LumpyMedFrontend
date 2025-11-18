@@ -101,9 +101,10 @@
               {{ 'CALCULATOR.WEIGHT' | translate }}
             </label>
             <input 
-              type="text" 
+              type="number" 
               formControlName="weightKg" 
-              maxlength="3"
+              maxlength="2"
+              (input)="limitInput('weightKg', 2)"
               pattern="[0-9]{1,4}(\.[0-9]{1,2})?"
               class="modern-input"
               placeholder="Peso del paciente"
@@ -118,7 +119,7 @@
             </p>
             <p *ngIf="f['weightKg'].errors?.['maxlength'] && f['weightKg'].touched" 
                class="error-message">
-              El peso no puede exceder 3 caracteres
+              El peso no puede exceder 2 caracteres
             </p>
           </div>
 
