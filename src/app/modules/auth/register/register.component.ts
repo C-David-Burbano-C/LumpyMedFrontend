@@ -15,11 +15,6 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
-  roles = [
-    { value: 'USER', label: 'Usuario' },
-    { value: 'ADMIN', label: 'Administrador' }
-  ];
-
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
@@ -32,8 +27,7 @@ export class RegisterComponent implements OnInit {
       username: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]],
-      role: ['USER', [Validators.required]]
+      confirmPassword: ['', [Validators.required]]
     }, {
       validators: this.passwordMatchValidator
     });
@@ -58,7 +52,11 @@ export class RegisterComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    const { confirmPassword, ...registerData } = this.registerForm.value;
+    const registerData = {
+      ...this.registerForm.value,
+      role: 'USER'
+    };
+    delete registerData.confirmPassword;
 
     this.authService.register(registerData).subscribe({
       next: (response: string) => {

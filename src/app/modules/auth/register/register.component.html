@@ -106,17 +106,6 @@
           </p>
         </div>
 
-        <!-- Role Selection -->
-        <div>
-          <label class="block text-sm font-medium text-text-secondary mb-2">
-            {{ 'AUTH.ROLE' | translate }}
-          </label>
-          <select formControlName="role" class="modern-input">
-            <option value="USER">{{ 'ROLES.USER' | translate }}</option>
-            <option value="ADMIN">{{ 'ROLES.ADMIN' | translate }}</option>
-          </select>
-        </div>
-
         <!-- Error Message -->
         <div *ngIf="errorMessage" class="badge-danger px-4 py-3 rounded-lg">
           <div class="flex items-center">
