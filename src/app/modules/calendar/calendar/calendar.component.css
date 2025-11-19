@@ -126,6 +126,10 @@
   box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
 }
 
+:host ::ng-deep .fc-button:not(:last-child) {
+  margin-right: 0.5rem !important;
+}
+
 :host ::ng-deep .fc-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;

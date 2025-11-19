@@ -43,6 +43,10 @@
          class="error-message">
         El nombre no puede exceder 20 caracteres
       </p>
+      <p *ngIf="f['name'].errors?.['whitespace'] && f['name'].touched" 
+         class="error-message">
+        No puede contener solo espacios
+      </p>
     </div>
 
     <!-- Description -->
@@ -64,6 +68,10 @@
       <p *ngIf="f['description'].errors?.['maxlength'] && f['description'].touched" 
          class="error-message">
         La descripción no puede exceder 100 caracteres
+      </p>
+      <p *ngIf="f['description'].errors?.['whitespace'] && f['description'].touched" 
+         class="error-message">
+        No puede contener solo espacios
       </p>
     </div>
 

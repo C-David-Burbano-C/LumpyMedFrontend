@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MedicinesService } from '../../../services/medicines.service';
 import { Medicine, CreateMedicineRequest, UpdateMedicineRequest } from '../../../models/medicine.model';
@@ -25,10 +25,22 @@ export class MedicineFormComponent implements OnInit {
     this.isEditMode = !!data.medicine;
   }
 
+  // Validador personalizado para no permitir solo espacios en blanco
+  noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    
+    const value = control.value.toString().trim();
+    if (value.length === 0) {
+      return { whitespace: true };
+    }
+    
+    return null;
+  }
+
   ngOnInit(): void {
     this.medicineForm = this.formBuilder.group({
-      name: [this.data.medicine?.name || '', [Validators.required, Validators.maxLength(20)]],
-      description: [this.data.medicine?.description || '', [Validators.maxLength(100)]],
+      name: [this.data.medicine?.name || '', [Validators.required, Validators.maxLength(20), this.noWhitespaceValidator]],
+      description: [this.data.medicine?.description || '', [Validators.maxLength(100), this.noWhitespaceValidator]],
       mgKgDay: [this.data.medicine?.mgKgDay || null, [Validators.required, Validators.min(0), Validators.maxLength(4)]],
       dosesPerDay: [this.data.medicine?.dosesPerDay || null, [Validators.required, Validators.min(1), Validators.maxLength(2)]],
       concentrationMg: [this.data.medicine?.concentrationMg || null, [Validators.required, Validators.min(0), Validators.maxLength(4)]],
@@ -51,7 +63,11 @@ export class MedicineFormComponent implements OnInit {
     this.errorMessage = '';
 
     if (this.isEditMode) {
-      const updateData: UpdateMedicineRequest = this.medicineForm.value;
+      const updateData: UpdateMedicineRequest = {
+        ...this.medicineForm.value,
+        name: this.medicineForm.value.name?.trim(),
+        description: this.medicineForm.value.description?.trim()
+      };
       this.medicinesService.update(this.data.medicine!.id!, updateData).subscribe({
         next: () => {
           this.loading = false;
@@ -63,7 +79,11 @@ export class MedicineFormComponent implements OnInit {
         }
       });
     } else {
-      const createData: CreateMedicineRequest = this.medicineForm.value;
+      const createData: CreateMedicineRequest = {
+        ...this.medicineForm.value,
+        name: this.medicineForm.value.name?.trim(),
+        description: this.medicineForm.value.description?.trim()
+      };
       this.medicinesService.create(createData).subscribe({
         next: () => {
           this.loading = false;

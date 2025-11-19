@@ -77,6 +77,9 @@
               <div *ngIf="f['description'].errors?.['maxlength'] && f['description'].touched" class="text-xs text-accent-danger">
                 Máximo 100 caracteres
               </div>
+              <div *ngIf="f['description'].errors?.['whitespace'] && f['description'].touched" class="text-xs text-accent-danger">
+                No puede contener solo espacios
+              </div>
             </div>
           </div>
         </div>
@@ -166,8 +169,8 @@
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Seleccionar rango de fechas</mat-label>
             <mat-date-range-input [formGroup]="dateRangeFormGroup" [rangePicker]="rangePicker">
-              <input matStartDate formControlName="start" placeholder="Fecha inicio">
-              <input matEndDate formControlName="end" placeholder="Fecha fin">
+              <input matStartDate formControlName="start" placeholder="Fecha inicio" [min]="minDate">
+              <input matEndDate formControlName="end" placeholder="Fecha fin" [min]="minDate">
             </mat-date-range-input>
             <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
             <mat-date-range-picker #rangePicker></mat-date-range-picker>
@@ -177,8 +180,14 @@
             <mat-error *ngIf="eventForm.get('dateRange.start')?.errors?.['required'] && eventForm.get('dateRange.start')?.touched">
               La fecha de inicio es obligatoria
             </mat-error>
+            <mat-error *ngIf="eventForm.get('dateRange.start')?.errors?.['pastDate'] && eventForm.get('dateRange.start')?.touched">
+              La fecha de inicio no puede ser anterior a hoy
+            </mat-error>
             <mat-error *ngIf="eventForm.get('dateRange.end')?.errors?.['required'] && eventForm.get('dateRange.end')?.touched">
               La fecha de fin es obligatoria
+            </mat-error>
+            <mat-error *ngIf="eventForm.get('dateRange.end')?.errors?.['pastDate'] && eventForm.get('dateRange.end')?.touched">
+              La fecha de fin no puede ser anterior a hoy
             </mat-error>
           </mat-form-field>
         </div>

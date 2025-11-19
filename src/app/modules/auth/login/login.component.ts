@@ -44,6 +44,11 @@ export class LoginComponent implements OnInit {
     return this.loginForm.controls;
   }
 
+  onInputChange(event: any, field: string): void {
+    const value = event.target.value.replace(/\s/g, '');
+    this.loginForm.get(field)?.setValue(value);
+  }
+
   onSubmit(): void {
     if (this.loginForm.invalid) {
       return;
@@ -52,7 +57,10 @@ export class LoginComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    this.authService.login(this.loginForm.value).subscribe({
+    this.authService.login({
+      username: this.loginForm.value.username?.trim(),
+      password: this.loginForm.value.password?.trim()
+    }).subscribe({
       next: (response) => {
         this.router.navigate([this.returnUrl]);
       },

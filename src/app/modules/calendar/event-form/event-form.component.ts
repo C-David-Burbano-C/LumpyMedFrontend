@@ -50,6 +50,7 @@ export class EventFormComponent implements OnInit {
   searchText = ''; // Texto actual del campo de búsqueda
   isEditMode = false;
   selectedDate: Date | null = null;
+  minDate: Date = new Date();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -97,16 +98,31 @@ export class EventFormComponent implements OnInit {
     return null;
   }
 
+  // Validador personalizado para fechas futuras: no permitir fechas anteriores a hoy
+  futureDateValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+
+    const selectedDate = new Date(control.value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to start of day for comparison
+
+    if (selectedDate < today) {
+      return { pastDate: true };
+    }
+
+    return null;
+  }
+
   initForm(): void {
     const currentUser = this.authService.getCurrentUser();
     const startDate = this.selectedDate || new Date();
 
     this.eventForm = this.formBuilder.group({
       title: [this.data.event?.title || '', [Validators.required, this.noWhitespaceValidator, Validators.maxLength(50)]],
-      description: [this.data.event?.description || '', [Validators.maxLength(200)]],
+      description: [this.data.event?.description || '', [Validators.maxLength(200), this.noWhitespaceValidator]],
       dateRange: this.formBuilder.group({
-        start: [this.data.event?.startDate ? new Date(this.data.event.startDate) : startDate, [Validators.required]],
-        end: [this.data.event?.endDate ? new Date(this.data.event.endDate) : new Date(startDate.getTime() + 60 * 60 * 1000), [Validators.required]]
+        start: [this.data.event?.startDate ? new Date(this.data.event.startDate) : startDate, [Validators.required, this.futureDateValidator]],
+        end: [this.data.event?.endDate ? new Date(this.data.event.endDate) : new Date(startDate.getTime() + 60 * 60 * 1000), [Validators.required, this.futureDateValidator]]
       }, { validators: this.dateRangeValidator })
     });
 

@@ -17,7 +17,6 @@
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <a *ngIf="!isLoggedIn" routerLink="/calendar" class="hidden md:inline-flex modern-btn-secondary">Ver calendario</a>
           <a *ngIf="!isLoggedIn" routerLink="/login/register" class="modern-btn-secondary">Crear cuenta</a>
           <a *ngIf="!isLoggedIn" routerLink="/login" class="modern-btn-primary">Ingresar</a>
           
@@ -183,19 +182,6 @@
       </section>
 
       <!-- CTA -->
-      <section class="modern-container py-16">
-        <div class="modern-card bg-gradient-to-br from-accent-primary/10 to-accent-purple/10 border-accent-primary/20 text-center space-y-6">
-          <p class="text-sm text-text-tertiary tracking-[0.3em] uppercase">listo para comenzar</p>
-          <h3 class="text-3xl font-bold">Crea una cuenta y conecta tus cálculos con todo tu equipo</h3>
-          <p class="text-text-secondary max-w-3xl mx-auto">
-            Pruébalo sin costo. Configura medicamentos, agendas y controla todo desde un dashboard diseñado para el día a día clínico.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a routerLink="/login" class="modern-btn-primary text-center">Entrar al sistema</a>
-            <a routerLink="/login/register" class="modern-btn-secondary text-center">Solicitar invitación</a>
-          </div>
-        </div>
-      </section>
       <section class="modern-container py-16">
         <div class="modern-card bg-gradient-to-br from-accent-primary/10 to-accent-purple/10 border-accent-primary/20 text-center space-y-6">
           <p class="text-sm text-text-tertiary tracking-[0.3em] uppercase">listo para comenzar</p>

@@ -44,6 +44,11 @@ export class RegisterComponent implements OnInit {
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
+  onInputChange(event: any, field: string): void {
+    const value = event.target.value.replace(/\s/g, '');
+    this.registerForm.get(field)?.setValue(value);
+  }
+
   onSubmit(): void {
     if (this.registerForm.invalid) {
       return;
@@ -55,8 +60,12 @@ export class RegisterComponent implements OnInit {
 
     const registerData = {
       ...this.registerForm.value,
-      role: 'USER'
+      username: this.registerForm.value.username?.trim(),
+      email: this.registerForm.value.email?.trim(),
+      password: this.registerForm.value.password?.trim(),
+      confirmPassword: this.registerForm.value.confirmPassword?.trim()
     };
+    delete registerData.confirmPassword;
     delete registerData.confirmPassword;
 
     this.authService.register(registerData).subscribe({

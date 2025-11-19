@@ -29,6 +29,7 @@
             autocomplete="username"
             class="modern-input"
             placeholder="Usuario único"
+            (input)="onInputChange($event, 'username')"
           />
           <p *ngIf="f['username'].errors?.['required'] && f['username'].touched" 
              class="error-message">
@@ -51,6 +52,7 @@
             autocomplete="email"
             class="modern-input"
             placeholder="correo@ejemplo.com"
+            (input)="onInputChange($event, 'email')"
           />
           <p *ngIf="f['email'].errors?.['required'] && f['email'].touched" 
              class="error-message">
@@ -73,6 +75,7 @@
             autocomplete="new-password"
             class="modern-input"
             placeholder="••••••••"
+            (input)="onInputChange($event, 'password')"
           />
           <p *ngIf="f['password'].errors?.['required'] && f['password'].touched" 
              class="error-message">
@@ -95,6 +98,7 @@
             autocomplete="new-password"
             class="modern-input"
             placeholder="••••••••"
+            (input)="onInputChange($event, 'confirmPassword')"
           />
           <p *ngIf="f['confirmPassword'].errors?.['required'] && f['confirmPassword'].touched" 
              class="error-message">
