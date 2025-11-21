@@ -68,13 +68,31 @@ export class CalculatorComponent implements OnInit {
     };
   }
 
+  // Validador condicional: si uno de los campos de concentración tiene valor, el otro es obligatorio
+  conditionalConcentrationValidator(control: AbstractControl): ValidationErrors | null {
+    const mg = control.get('userConcentrationMg')?.value;
+    const ml = control.get('userConcentrationMl')?.value;
+
+    const mgHasValue = mg !== null && mg !== undefined && mg !== '';
+    const mlHasValue = ml !== null && ml !== undefined && ml !== '';
+
+    if (mgHasValue && !mlHasValue) {
+      return { concentrationMlRequired: true };
+    }
+    if (mlHasValue && !mgHasValue) {
+      return { concentrationMgRequired: true };
+    }
+
+    return null;
+  }
+
   initForm(): void {
     this.calculatorForm = this.formBuilder.group({
       medicineName: ['', [Validators.required, Validators.maxLength(20)]],
-      weightKg: ['', [Validators.required, Validators.min(0.1), Validators.maxLength(2)]],
+      weightKg: ['', [Validators.required, Validators.min(0.1), Validators.max(30), Validators.maxLength(2)]],
       userConcentrationMg: ['', [Validators.maxLength(5)]],
       userConcentrationMl: ['', [Validators.maxLength(5)]]
-    });
+    }, { validators: this.conditionalConcentrationValidator });
 
     this.filteredMedicines$ = this.calculatorForm.get('medicineName')!.valueChanges.pipe(
       startWith(''),

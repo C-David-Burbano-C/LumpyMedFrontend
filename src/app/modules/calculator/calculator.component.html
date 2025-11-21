@@ -134,6 +134,10 @@
                class="error-message">
               {{ 'VALIDATION.MIN_VALUE' | translate: {value: 0.1} }}
             </p>
+            <p *ngIf="f['weightKg'].errors?.['max'] && f['weightKg'].touched" 
+               class="error-message">
+              El peso máximo permitido es 30 kg
+            </p>
             <p *ngIf="f['weightKg'].errors?.['maxlength'] && f['weightKg'].touched" 
                class="error-message">
               El peso no puede exceder 2 caracteres
@@ -172,6 +176,10 @@
                    class="error-message">
                   La concentración en mg no puede exceder 5 caracteres
                 </p>
+                <p *ngIf="calculatorForm.errors?.['concentrationMlRequired'] && f['userConcentrationMg'].touched" 
+                   class="error-message">
+                  Si ingresas la concentración en mg, debes ingresar también la concentración en ml
+                </p>
               </div>
 
               <!-- Custom Concentration Ml -->
@@ -192,6 +200,10 @@
                 <p *ngIf="f['userConcentrationMl'].errors?.['maxlength'] && f['userConcentrationMl'].touched" 
                    class="error-message">
                   La concentración en ml no puede exceder 5 caracteres
+                </p>
+                <p *ngIf="calculatorForm.errors?.['concentrationMgRequired'] && f['userConcentrationMl'].touched" 
+                   class="error-message">
+                  Si ingresas la concentración en ml, debes ingresar también la concentración en mg
                 </p>
               </div>
             </div>
