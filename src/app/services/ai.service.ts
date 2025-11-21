@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, retry, switchMap, timeout } from 'rxjs/operators';
 import { MedicineKnowledge, MedicineKnowledgeService } from './medicine-knowledge.service';
+import { environment } from '../../environments/environment';
 
 export interface MedicalAdviceRequest {
   medicineName: string;
@@ -26,7 +27,10 @@ export interface AiResponse {
   providedIn: 'root'
 })
 export class AiService {
-  private readonly apiKey = 'AIzaSyCa0r40dSVotSAmMIlObaw-4OGGhRVSV4U';
+  // NOTA: Si ves errores 403 Forbidden, la API key puede estar bloqueada/excedida
+  // Genera una nueva en: https://aistudio.google.com/app/apikey
+  // y actualízala en src/environments/environment.ts
+  private readonly apiKey = environment.geminiApiKey || '';
   private readonly apiBaseUrl = 'https://generativelanguage.googleapis.com/v1beta';
   private readonly modelName = 'models/gemini-flash-latest';
   private readonly requestTimeoutMs = 15000;
@@ -69,6 +73,11 @@ export class AiService {
       catchError((error) => {
         if (error.name === 'TimeoutError') {
           return throwError(() => new Error('El servicio de IA tardó demasiado en responder. Intenta nuevamente.'));
+        }
+        // Error 403: API key inválida, expirada o cuota excedida
+        if (error.status === 403) {
+          console.warn('⚠️ Gemini API Key bloqueada o sin permisos. Genera una nueva en: https://aistudio.google.com/app/apikey');
+          return throwError(() => new Error('Servicio de IA temporalmente no disponible. La funcionalidad principal sigue funcionando.'));
         }
         return throwError(() => new Error('Error al generar consejos médicos. Por favor, consulte a un profesional de la salud.'));
       })
