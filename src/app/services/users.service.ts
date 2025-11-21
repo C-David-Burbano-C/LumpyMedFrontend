@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -26,19 +26,23 @@ export class UsersService {
       );
   }
 
-  private handleError(error: any) {
+  private handleError(error: HttpErrorResponse | Error) {
     let errorMessage = 'Ha ocurrido un error desconocido';
 
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = error.error.message;
-    } else {
-      if (error.status === 400) {
-        errorMessage = 'Datos inválidos para actualizar el perfil';
-      } else if (error.status === 409) {
-        errorMessage = 'El nombre de usuario o email ya está en uso';
-      } else if (error.error && error.error.message) {
+    if (error instanceof HttpErrorResponse) {
+      if (error.error instanceof ErrorEvent) {
         errorMessage = error.error.message;
+      } else {
+        if (error.status === 400) {
+          errorMessage = 'Datos inválidos para actualizar el perfil';
+        } else if (error.status === 409) {
+          errorMessage = 'El nombre de usuario o email ya está en uso';
+        } else if (error.error && typeof error.error === 'object' && error.error.message) {
+          errorMessage = error.error.message;
+        }
       }
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
     }
 
     return throwError(() => new Error(errorMessage));

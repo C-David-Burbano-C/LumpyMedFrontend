@@ -177,6 +177,9 @@
             <mat-error *ngIf="eventForm.get('dateRange')?.errors?.['dateRangeInvalid'] && eventForm.get('dateRange')?.touched">
               La fecha de fin debe ser posterior a la fecha de inicio
             </mat-error>
+            <mat-error *ngIf="eventForm.get('dateRange')?.errors?.['sameDayInvalid'] && eventForm.get('dateRange')?.touched">
+              Las fechas no pueden ser inferiores al mismo día que se está asignando
+            </mat-error>
             <mat-error *ngIf="eventForm.get('dateRange.start')?.errors?.['required'] && eventForm.get('dateRange.start')?.touched">
               La fecha de inicio es obligatoria
             </mat-error>
@@ -190,6 +193,11 @@
               La fecha de fin no puede ser anterior a hoy
             </mat-error>
           </mat-form-field>
+
+          <!-- Mensaje informativo siempre visible -->
+          <div class="mt-2 text-xs text-text-tertiary bg-dark-hover/50 px-3 py-2 rounded-md border border-dark-border/30">
+            Las fechas no pueden ser inferiores al mismo día que se está asignando
+          </div>
         </div>
 
         <!-- Error Message -->
@@ -205,16 +213,6 @@
         <!-- Action Buttons -->
         <div class="flex items-center justify-end space-x-3 pt-4 border-t border-dark-border">
           <button
-            type="button"
-            mat-dialog-close
-            class="modern-btn-secondary"
-          >
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-            Cancelar
-          </button>
-          <button
             type="submit"
             class="modern-btn-primary"
             [disabled]="loading || !isFormValid"
@@ -223,11 +221,11 @@
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
               </svg>
-              {{ isEditMode ? 'Actualizar' : 'Crear' }}
+              {{ isEditMode ? ('COMMON.UPDATE' | translate) : ('COMMON.CREATE' | translate) }}
             </span>
             <span *ngIf="loading" class="flex items-center">
               <span class="spinner mr-2"></span>
-              {{ isEditMode ? 'Actualizando...' : 'Creando...' }}
+              {{ isEditMode ? ('COMMON.UPDATING' | translate) : ('COMMON.CREATING' | translate) }}
             </span>
           </button>
         </div>

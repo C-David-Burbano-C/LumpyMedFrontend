@@ -17,7 +17,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatDateRangePicker, MatDateRangeInput } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Observable, startWith, map, of } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { Observable, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-event-form',
@@ -35,7 +36,8 @@ import { Observable, startWith, map, of } from 'rxjs';
     MatIconModule,
     MatTooltipModule,
     MatDateRangePicker,
-    MatDateRangeInput
+    MatDateRangeInput,
+    TranslateModule
   ],
   templateUrl: './event-form.component.html',
   styleUrl: './event-form.component.css'
@@ -91,8 +93,12 @@ export class EventFormComponent implements OnInit {
     const startDate = new Date(start);
     const endDate = new Date(end);
 
-    if (endDate <= startDate) {
-      return { dateRangeInvalid: true };
+    if (endDate < startDate) {
+      return { dateRangeInvalid: true, message: 'La fecha de fin no puede ser anterior a la fecha de inicio' };
+    }
+
+    if (endDate.getTime() === startDate.getTime()) {
+      return { sameDayInvalid: true, message: 'Las fechas no pueden ser inferiores al mismo día que se está asignando' };
     }
 
     return null;
@@ -249,7 +255,14 @@ export class EventFormComponent implements OnInit {
     // Validación adicional para rango de fechas
     const dateRange = this.eventForm.get('dateRange');
     if (dateRange?.invalid) {
-      this.errorMessage = 'La fecha de fin debe ser posterior a la fecha de inicio';
+      const errors = dateRange.errors;
+      if (errors?.['dateRangeInvalid']) {
+        this.errorMessage = 'La fecha de fin debe ser posterior a la fecha de inicio';
+      } else if (errors?.['sameDayInvalid']) {
+        this.errorMessage = 'Las fechas no pueden ser inferiores al mismo día que se está asignando';
+      } else {
+        this.errorMessage = 'Error en el rango de fechas';
+      }
       return;
     }
 

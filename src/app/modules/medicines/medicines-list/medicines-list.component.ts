@@ -5,6 +5,7 @@ import { MedicinesService } from '../../../services/medicines.service';
 import { AuthService } from '../../../services/auth.service';
 import { Medicine } from '../../../models/medicine.model';
 import { MedicineFormComponent } from '../medicine-form/medicine-form.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-medicines-list',
@@ -16,12 +17,15 @@ export class MedicinesListComponent implements OnInit {
   medicines: Medicine[] = [];
   loading = false;
   errorMessage = '';
+  isSidebarOpen = false;
+  isSidebarHovered = false;
 
   constructor(
     private medicinesService: MedicinesService,
     private authService: AuthService,
     private dialog: MatDialog,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -81,6 +85,24 @@ export class MedicinesListComponent implements OnInit {
         });
       }
     });
+  }
+
+  // Sidebar methods
+  toggleSidebar(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.isSidebarOpen = false;
+  }
+
+  onSidebarLogout(): void {
+    this.closeSidebar();
+    this.logout();
+  }
+
+  onSidebarHoverChange(isHovered: boolean): void {
+    this.isSidebarHovered = isHovered;
   }
 
   logout(): void {

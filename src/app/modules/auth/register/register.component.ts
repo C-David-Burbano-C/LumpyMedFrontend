@@ -16,6 +16,12 @@ export class RegisterComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+  // Estados de validación en tiempo real - REMOVIDOS
+  // usernameChecking = false;
+  // emailChecking = false;
+  // usernameError = '';
+  // emailError = '';
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
@@ -44,10 +50,9 @@ export class RegisterComponent implements OnInit {
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
-  onInputChange(event: any, field: string): void {
-    const value = event.target.value.replace(/\s/g, '');
-    this.registerForm.get(field)?.setValue(value);
-  }
+  // MÉTODOS DE VERIFICACIÓN REMOVIDOS
+  // private checkUsernameAvailability(username: string): Observable<boolean> { ... }
+  // private checkEmailAvailability(email: string): Observable<boolean> { ... }
 
   onSubmit(): void {
     if (this.registerForm.invalid) {
@@ -59,24 +64,36 @@ export class RegisterComponent implements OnInit {
     this.successMessage = '';
 
     const registerData = {
-      ...this.registerForm.value,
       username: this.registerForm.value.username?.trim(),
       email: this.registerForm.value.email?.trim(),
       password: this.registerForm.value.password?.trim(),
-      confirmPassword: this.registerForm.value.confirmPassword?.trim()
+      rol: 'USER' as const  // Campo requerido por el backend
     };
-    delete registerData.confirmPassword;
-    delete registerData.confirmPassword;
 
     this.authService.register(registerData).subscribe({
       next: (response: string) => {
         this.loading = false;
-        // Mostrar mensaje de éxito simple
-        this.successMessage = 'Usuario registrado exitosamente';
-        // Redirigir al login después de 2 segundos
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2000);
+        this.successMessage = 'Usuario registrado exitosamente. Iniciando sesión...';
+
+        // Hacer login automático con las credenciales del registro
+        const loginData = {
+          username: registerData.username,
+          password: registerData.password
+        };
+
+        this.authService.login(loginData).subscribe({
+          next: (authResponse) => {
+            // Login exitoso, redirigir al dashboard o página principal
+            this.router.navigate(['/']);
+          },
+          error: (loginError) => {
+            // Si falla el login automático, redirigir al login manual
+            this.successMessage = 'Usuario registrado exitosamente. Por favor inicia sesión.';
+            setTimeout(() => {
+              this.router.navigate(['/login']);
+            }, 2000);
+          }
+        });
       },
       error: (error) => {
         this.loading = false;

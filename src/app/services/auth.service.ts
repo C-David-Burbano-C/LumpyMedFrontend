@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { catchError, map, tap, switchMap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from '../../environments/environment';
-import { User, LoginRequest, RegisterRequest, AuthResponse, RegisterResponse, RefreshTokenResponse, UserProfile } from '../models/user.model';
+import { User, LoginRequest, RegisterRequest, AuthResponse, RefreshTokenResponse } from '../models/user.model';
 import { LogoutConfirmationDialogComponent } from '../modules/shared/logout-confirmation-dialog/logout-confirmation-dialog.component';
 
 @Injectable({
@@ -71,6 +71,10 @@ export class AuthService {
       catchError(this.handleError)
     );
   }
+
+  // MÉTODOS DE VERIFICACIÓN REMOVIDOS - El backend valida duplicados en el registro
+  // checkUsernameAvailability(username: string): Observable<boolean> { ... }
+  // checkEmailAvailability(email: string): Observable<boolean> { ... }
 
   refreshToken(): Observable<RefreshTokenResponse> {
     return this.http.post<RefreshTokenResponse>(`${environment.apiUrl}/auth/refresh`, {})

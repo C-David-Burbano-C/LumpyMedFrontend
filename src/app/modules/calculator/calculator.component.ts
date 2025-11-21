@@ -6,8 +6,9 @@ import { CalculatorService } from '../../services/calculator.service';
 import { MedicinesService } from '../../services/medicines.service';
 import { AuthService } from '../../services/auth.service';
 import { AiService, MedicalAdviceRequest, AiResponse } from '../../services/ai.service';
-import { DoseResponse } from '../../models/dose.model';
+import { DoseResult } from '../../models/dose.model';
 import { Medicine } from '../../models/medicine.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-calculator',
@@ -20,11 +21,14 @@ export class CalculatorComponent implements OnInit {
   loading = false;
   calculating = false;
   errorMessage = '';
-  doseResult: DoseResponse | null = null;
+  doseResult: DoseResult | null = null;
   medicines: Medicine[] = [];
   filteredMedicines$!: Observable<Medicine[]>;
+  selectedMedicine: Medicine | null = null;
   currentUser: any;
   isAdmin = false;
+  isSidebarOpen = false;
+  isSidebarHovered = false;
 
   // AI Advice properties
   aiAdvice: AiResponse | null = null;
@@ -37,7 +41,8 @@ export class CalculatorComponent implements OnInit {
     private medicinesService: MedicinesService,
     private authService: AuthService,
     private aiService: AiService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -67,13 +72,20 @@ export class CalculatorComponent implements OnInit {
     this.calculatorForm = this.formBuilder.group({
       medicineName: ['', [Validators.required, Validators.maxLength(20)]],
       weightKg: ['', [Validators.required, Validators.min(0.1), Validators.maxLength(2)]],
-      userConcentrationMg: [''],
-      userConcentrationMl: ['']
+      userConcentrationMg: ['', [Validators.maxLength(5)]],
+      userConcentrationMl: ['', [Validators.maxLength(5)]]
     });
 
     this.filteredMedicines$ = this.calculatorForm.get('medicineName')!.valueChanges.pipe(
       startWith(''),
       map((value: string | Medicine) => {
+        // Si es un objeto Medicine (seleccionado), actualizar selectedMedicine
+        if (typeof value === 'object' && value && value.name) {
+          this.selectedMedicine = value;
+        } else if (typeof value === 'string' && value === '') {
+          // Si se borra el campo, limpiar selectedMedicine
+          this.selectedMedicine = null;
+        }
         const name = typeof value === 'string' ? value : value?.name;
         return name ? this._filterMedicines(name) : this.medicines.slice();
       })
@@ -128,42 +140,52 @@ export class CalculatorComponent implements OnInit {
       return;
     }
 
-    const request = {
+    const request: any = {
       medicineName: medicine.name,
-      weightKg: formValue.weightKg,
-      userConcentrationMg: formValue.userConcentrationMg || medicine.concentrationMg,
-      userConcentrationMl: formValue.userConcentrationMl || medicine.concentrationMl
+      weightKg: formValue.weightKg
     };
+
+    // Solo agregar concentración personalizada si se especificó
+    if (formValue.userConcentrationMg && (typeof formValue.userConcentrationMg === 'string' && formValue.userConcentrationMg.trim() !== '') || (typeof formValue.userConcentrationMg === 'number' && formValue.userConcentrationMg > 0)) {
+      request.userConcentrationMg = parseFloat(formValue.userConcentrationMg.toString());
+    }
+    if (formValue.userConcentrationMl && (typeof formValue.userConcentrationMl === 'string' && formValue.userConcentrationMl.trim() !== '') || (typeof formValue.userConcentrationMl === 'number' && formValue.userConcentrationMl > 0)) {
+      request.userConcentrationMl = parseFloat(formValue.userConcentrationMl.toString());
+    }
 
     this.calculatorService.calculateDose(request).subscribe({
       next: (result) => {
-        // Fix: Backend returns medicine as string, find the complete medicine object
-        if (typeof result.medicine === 'string') {
-          const medicineName = result.medicine;
-          const completeMedicine = this.medicines.find(m => m.name === medicineName);
-          if (completeMedicine) {
-            result.medicine = completeMedicine;
-          } else {
-            // If medicine not found, create a minimal object with the name
-            result.medicine = { name: medicineName } as unknown as Medicine;
-          }
+        // Backend returns medicine as string, find the complete medicine object for display
+        const medicineName = result.medicine;
+        const completeMedicine = this.medicines.find(m => m.name === medicineName);
+        if (completeMedicine) {
+          // Create a display object that combines the result with medicine details
+          this.doseResult = {
+            ...result,
+            medicine: completeMedicine // Use complete medicine object for display
+          };
+        } else {
+          // If medicine not found, create a minimal object with the name
+          this.doseResult = {
+            ...result,
+            medicine: { name: medicineName } as Medicine
+          };
         }
 
-        this.doseResult = result;
         this.loading = false;
 
-        // Generate AI advice after successful calculation
-        this.generateAiAdvice(result);
+        // Generate AI advice after successful calculation (async, non-blocking)
+        this.generateAiAdvice(this.doseResult);
       },
       error: (error) => {
-        this.errorMessage = error.message;
+        this.errorMessage = error.message || 'Error al calcular la dosis';
         this.loading = false;
       }
     });
   }
 
-  generateAiAdvice(doseResult: DoseResponse): void {
-    this.aiLoading = true;
+  generateAiAdvice(doseResult: DoseResult): void {
+    // Don't show loading state for AI advice to avoid blocking UI
     this.aiError = '';
     this.aiAdvice = null;
 
@@ -182,11 +204,10 @@ export class CalculatorComponent implements OnInit {
     this.aiService.generateMedicalAdvice(adviceRequest).subscribe({
       next: (advice) => {
         this.aiAdvice = advice;
-        this.aiLoading = false;
       },
       error: (error) => {
-        this.aiError = error.message;
-        this.aiLoading = false;
+        // Silently handle AI errors - don't show to user or block functionality
+        this.aiAdvice = null;
       }
     });
   }
@@ -213,6 +234,28 @@ export class CalculatorComponent implements OnInit {
   isResultSafe(): boolean {
     if (!this.doseResult) return false;
     return this.doseResult.alert.toLowerCase().includes('dentro');
+  }
+
+  get formValue() {
+    return this.calculatorForm.value;
+  }
+
+  // Sidebar methods
+  toggleSidebar(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.isSidebarOpen = false;
+  }
+
+  onSidebarLogout(): void {
+    this.closeSidebar();
+    this.logout();
+  }
+
+  onSidebarHoverChange(isHovered: boolean): void {
+    this.isSidebarHovered = isHovered;
   }
 
   logout(): void {

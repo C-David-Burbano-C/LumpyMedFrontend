@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FullCalendarModule } from '@fullcalendar/angular';
 import { CalendarOptions } from '@fullcalendar/core';
 import { CalendarService } from '../../../services/calendar.service';
 import { MedicinesService } from '../../../services/medicines.service';
@@ -14,11 +20,22 @@ import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { EventFormComponent } from '../event-form/event-form.component';
 import { EventDetailsDialogComponent, EventDetailsData } from '../event-details-dialog/event-details-dialog.component';
+import { MobileSidebarComponent } from '../../../shared/mobile-sidebar/mobile-sidebar.component';
 
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
-  styleUrl: './calendar.component.css'
+  styleUrl: './calendar.component.css',
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    FullCalendarModule,
+    MobileSidebarComponent
+  ]
 })
 export class CalendarComponent implements OnInit {
   calendarOptions: CalendarOptions = {
@@ -44,6 +61,8 @@ export class CalendarComponent implements OnInit {
   totalPages = 0;
   currentUser: any;
   isAdmin = false;
+  isSidebarOpen = false;
+  isSidebarHovered = false;
 
   constructor(
     private calendarService: CalendarService,
@@ -85,7 +104,6 @@ export class CalendarComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading events:', error);
         let errorMessage = 'Error al cargar eventos';
         
         if (error.status === 403) {
@@ -212,6 +230,24 @@ export class CalendarComponent implements OnInit {
     // Return different colors based on medicine
     const colors = ['#3788d8', '#fc6d26', '#7b64ff', '#00d4aa', '#ff6b6b'];
     return colors[(medicineId || 0) % colors.length];
+  }
+
+  // Sidebar methods
+  toggleSidebar(): void {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.isSidebarOpen = false;
+  }
+
+  onSidebarLogout(): void {
+    this.closeSidebar();
+    this.logout();
+  }
+
+  onSidebarHoverChange(isHovered: boolean): void {
+    this.isSidebarHovered = isHovered;
   }
 
   logout(): void {

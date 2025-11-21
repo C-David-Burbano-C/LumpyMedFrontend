@@ -1,32 +1,42 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from './auth.service';
 import { CalendarEvent, CreateEventRequest, UpdateEventRequest, AiSuggestionRequest, AiSuggestionResponse, CalendarEventsResponse, CalendarFilters } from '../models/calendar.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CalendarService {
-  private readonly STORAGE_KEY = 'calendar_events';
+  private readonly STORAGE_KEY_PREFIX = 'calendar_events_';
 
-  constructor() {
-    // Initialize localStorage if empty
-    if (!localStorage.getItem(this.STORAGE_KEY)) {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify([]));
+  constructor(private authService: AuthService) {}
+
+  private getStorageKey(): string {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      throw new Error('Usuario no autenticado');
     }
+    return `${this.STORAGE_KEY_PREFIX}${currentUser.username}`;
   }
 
   getAllEvents(filters?: CalendarFilters): Observable<CalendarEventsResponse> {
     try {
+      const currentUser = this.authService.getCurrentUser();
+      if (!currentUser) {
+        return throwError(() => new Error('Usuario no autenticado'));
+      }
+
       const events: CalendarEvent[] = this.getStoredEvents();
       let filteredEvents = [...events];
 
-      // Apply filters
+      // Apply automatic user filtering - each user only sees their own events
+      const currentUserId = currentUser.username === 'admin' ? 1 : 2;
+      filteredEvents = filteredEvents.filter(event => event.userId === currentUserId);
+
+      // Apply additional filters
       if (filters) {
-        if (filters.userId !== undefined) {
-          filteredEvents = filteredEvents.filter(event => event.userId === filters.userId);
-        }
         if (filters.medicineId !== undefined) {
           filteredEvents = filteredEvents.filter(event => event.medicineId === filters.medicineId);
         }
@@ -84,11 +94,16 @@ export class CalendarService {
 
   createEvent(eventData: CreateEventRequest): Observable<CalendarEvent> {
     try {
+      const currentUser = this.authService.getCurrentUser();
+      if (!currentUser) {
+        return throwError(() => new Error('Usuario no autenticado'));
+      }
+
       const events = this.getStoredEvents();
       const newEvent: CalendarEvent = {
         ...eventData,
         id: this.generateId(),
-        userId: eventData.userId || 1, // Default user ID if not provided
+        userId: currentUser.username === 'admin' ? 1 : 2, // Asignar ID basado en el rol/username
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -143,7 +158,7 @@ export class CalendarService {
     }
   }
 
-  getAiSuggestion(request: AiSuggestionRequest): Observable<AiSuggestionResponse> {
+  getAiSuggestion(_request: AiSuggestionRequest): Observable<AiSuggestionResponse> {
     // Mock AI suggestion for now
     const suggestions = [
       'Recuerda tomar el medicamento con alimentos',
@@ -163,12 +178,12 @@ export class CalendarService {
   }
 
   private getStoredEvents(): CalendarEvent[] {
-    const stored = localStorage.getItem(this.STORAGE_KEY);
+    const stored = localStorage.getItem(this.getStorageKey());
     return stored ? JSON.parse(stored) : [];
   }
 
   private saveEvents(events: CalendarEvent[]): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(events));
+    localStorage.setItem(this.getStorageKey(), JSON.stringify(events));
   }
 
   private generateId(): number {
@@ -177,23 +192,27 @@ export class CalendarService {
     return maxId + 1;
   }
 
-  private handleError(error: any) {
+  private handleError(error: HttpErrorResponse | Error) {
     let errorMessage = 'Ha ocurrido un error con el calendario';
 
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = error.error.message;
-    } else {
-      if (error.status === 404) {
-        errorMessage = 'Evento no encontrado';
-      } else if (error.status === 409) {
-        errorMessage = 'Conflicto de horario';
-      } else if (error.status === 401) {
-        errorMessage = 'No autorizado para acceder al calendario';
-      } else if (error.status === 403) {
-        errorMessage = 'No tienes permisos para esta acción';
-      } else if (error.error && error.error.message) {
+    if (error instanceof HttpErrorResponse) {
+      if (error.error instanceof ErrorEvent) {
         errorMessage = error.error.message;
+      } else {
+        if (error.status === 404) {
+          errorMessage = 'Evento no encontrado';
+        } else if (error.status === 409) {
+          errorMessage = 'Conflicto de horario';
+        } else if (error.status === 401) {
+          errorMessage = 'No autorizado para acceder al calendario';
+        } else if (error.status === 403) {
+          errorMessage = 'No tienes permisos para esta acción';
+        } else if (error.error && typeof error.error === 'object' && error.error.message) {
+          errorMessage = error.error.message;
+        }
       }
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
     }
 
     return throwError(() => new Error(errorMessage));

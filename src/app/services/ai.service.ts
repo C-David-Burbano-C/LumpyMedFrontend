@@ -67,7 +67,6 @@ export class AiService {
         );
       }),
       catchError((error) => {
-        console.error('Error generating medical advice:', error);
         if (error.name === 'TimeoutError') {
           return throwError(() => new Error('El servicio de IA tardó demasiado en responder. Intenta nuevamente.'));
         }
@@ -191,7 +190,6 @@ Reglas:
       }
 
     } catch (error) {
-      console.error('Error parsing AI response:', error);
       advice.advice = aiText || 'No se pudo interpretar la respuesta del servicio de IA.';
     }
 

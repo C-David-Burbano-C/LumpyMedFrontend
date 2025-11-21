@@ -57,8 +57,7 @@ export class MedicineKnowledgeService {
         return this.http.get<RxClassResponse>(`${this.baseUrl}/rxclass/class/byRxcui.json`, { params: knowledgeParams });
       }),
       map((response) => this.toKnowledge(response)),
-      catchError((error) => {
-        console.warn('No se pudo ampliar la información del medicamento', error);
+      catchError((_error) => {
         return of(null);
       })
     );

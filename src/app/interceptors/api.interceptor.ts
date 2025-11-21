@@ -14,10 +14,22 @@ export class ApiInterceptor implements HttpInterceptor {
     const isApiRequest = request.url.startsWith(environment.apiUrl) || request.url.startsWith('/');
 
     if (isApiRequest) {
+      // Excluir endpoints públicos que no requieren autenticación
+      // Verificar tanto URLs completas como rutas relativas
+      const isPublicEndpoint = 
+        request.url.includes('/auth/check-username/') || 
+        request.url.includes('/auth/check-email/') ||
+        request.url.includes('/auth/login') ||
+        request.url.includes('/auth/register') ||
+        request.url.includes('/auth/refresh') ||
+        request.url.includes('check-username') ||
+        request.url.includes('check-email');
+
       // Agregar token de autorización si existe solo para llamadas al backend propio
+      // y no es un endpoint público
       const token = localStorage.getItem(environment.tokenKey);
       
-      if (token) {
+      if (token && !isPublicEndpoint) {
         request = request.clone({
           setHeaders: {
             Authorization: `Bearer ${token}`

@@ -1,45 +1,19 @@
 <div class="min-h-screen bg-dark-bg/70">
-  <!-- Header/Navigation -->
-  <header class="glass-effect border-b border-dark-border sticky top-0 z-50">
-    <div class="modern-container py-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="p-2 bg-accent-primary/10 rounded-lg">
-            <img src="assets/logo.svg" alt="Logo" class="w-6 h-6">
-          </div>
-          <div>
-            <h1 class="text-xl font-bold text-text-primary">Calendario de Medicación</h1>
-            <p class="text-xs text-text-tertiary">Programa y administra las dosis</p>
-          </div>
-        </div>
-        <div class="flex items-center space-x-4">
-          <a routerLink="/medicines" *ngIf="isAdmin"
-             class="modern-btn-secondary text-sm px-4 py-2">
-            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-            </svg>
-            Medicamentos
-          </a>
-          <a routerLink="/calculator"
-             class="modern-btn-secondary text-sm px-4 py-2">
-            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-            </svg>
-            Calculadora
-          </a>
-          <button (click)="logout()" class="modern-btn-danger text-sm px-4 py-2">
-            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-            </svg>
-            Salir
-          </button>
-        </div>
-      </div>
-    </div>
-  </header>
+  <!-- Mobile Sidebar -->
+  <app-mobile-sidebar
+    [isOpen]="isSidebarOpen"
+    [isAdmin]="isAdmin"
+    (closeSidebar)="closeSidebar()"
+    (logout)="onSidebarLogout()"
+    (hoverChange)="onSidebarHoverChange($event)">
+  </app-mobile-sidebar>
 
   <!-- Main Content -->
-  <main class="modern-container py-8">
+  <main class="modern-container py-8 transition-all duration-300"
+        [ngClass]="{
+          'md:pl-16': !isSidebarHovered,
+          'md:pl-64': isSidebarHovered
+        }">
     <div class="max-w-6xl mx-auto">
       <!-- Calendar Card -->
       <div class="modern-card animate-fade-in">
@@ -56,7 +30,7 @@
         </div>
 
         <div class="calendar-toolbar mb-6">
-          <button mat-raised-button color="primary" (click)="openCreateEventDialog()" class="modern-btn-primary">
+          <button mat-raised-button color="primary" (click)="openCreateEventDialog()" class="modern-btn-primary w-full sm:w-auto">
             <mat-icon>add</mat-icon>
             Nuevo Evento
           </button>

@@ -3,6 +3,37 @@ module.exports = {
   content: [
     "./src/**/*.{html,ts}",
   ],
+  safelist: [
+    // Responsive utilities that might be purged
+    'md:hidden',
+    'md:flex',
+    'md:block',
+    'sm:flex-row',
+    'sm:flex-col',
+    'flex-col',
+    'flex-row',
+    'space-y-4',
+    'md:space-y-0',
+    'md:flex-row',
+    'md:items-center',
+    'md:justify-between',
+    'w-full',
+    'md:w-auto',
+    'sm:w-auto',
+    'hidden',
+    'xs:inline',
+    'sm:inline',
+    // Background colors
+    'bg-dark-bg',
+    'bg-dark-surface',
+    'bg-dark-elevated',
+    'bg-dark-border',
+    'bg-dark-hover',
+    // Border colors
+    'border-dark-border',
+    'border-dark-border/50',
+    'border-dark-border/30',
+  ],
   theme: {
     extend: {
       colors: {

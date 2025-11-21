@@ -1,45 +1,19 @@
 <div class="min-h-screen bg-dark-bg/70">
-  <!-- Header/Navigation -->
-  <header class="glass-effect border-b border-dark-border sticky top-0 z-50">
-    <div class="modern-container py-4">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-          <div class="p-2 bg-accent-primary/10 rounded-lg">
-            <img src="assets/logo.svg" alt="Logo" class="w-6 h-6">
-          </div>
-          <div>
-            <h1 class="text-xl font-bold text-text-primary">{{ 'CALCULATOR.TITLE' | translate }}</h1>
-            <p class="text-xs text-text-tertiary">Sistema de cálculo inteligente</p>
-          </div>
-        </div>
-        <div class="flex items-center space-x-4">
-          <a routerLink="/medicines" *ngIf="isAdmin" 
-             class="modern-btn-secondary text-sm px-4 py-2">
-            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-            </svg>
-            Medicamentos
-          </a>
-          <a routerLink="/calendar" 
-             class="modern-btn-secondary text-sm px-4 py-2">
-            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-            </svg>
-            Calendario
-          </a>
-          <button (click)="logout()" class="modern-btn-danger text-sm px-4 py-2">
-            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-            </svg>
-            Salir
-          </button>
-        </div>
-      </div>
-    </div>
-  </header>
+  <!-- Mobile Sidebar -->
+  <app-mobile-sidebar
+    [isOpen]="isSidebarOpen"
+    [isAdmin]="isAdmin"
+    (closeSidebar)="closeSidebar()"
+    (logout)="onSidebarLogout()"
+    (hoverChange)="onSidebarHoverChange($event)">
+  </app-mobile-sidebar>
 
   <!-- Main Content -->
-  <main class="modern-container py-8">
+  <main class="modern-container py-8 transition-all duration-300"
+        [ngClass]="{
+          'md:pl-16': !isSidebarHovered,
+          'md:pl-64': isSidebarHovered
+        }">
     <div class="max-w-4xl mx-auto">
       <!-- Calculator Card -->
       <div class="modern-card animate-fade-in">
@@ -92,6 +66,49 @@
             </p>
           </div>
 
+          <!-- Selected Medicine Information -->
+          <div *ngIf="selectedMedicine" class="bg-dark-elevated/30 border border-dark-border rounded-lg p-4 animate-fade-in">
+            <div class="flex items-center space-x-3 mb-3">
+              <div class="p-2 bg-accent-primary/10 rounded-lg">
+                <svg class="w-5 h-5 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="text-sm font-medium text-text-primary">Información del Medicamento</h4>
+                <p class="text-xs text-text-tertiary">{{ selectedMedicine.name }}</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+              <div class="flex justify-between">
+                <span class="text-text-tertiary">Dosis (mg/kg/día):</span>
+                <span class="text-text-primary font-medium">{{ selectedMedicine.mgKgDay || 'N/A' }} mg</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-text-tertiary">Frecuencia:</span>
+                <span class="text-text-primary font-medium">{{ selectedMedicine.dosesPerDay || 'N/A' }} dosis/día</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-text-tertiary">Concentración:</span>
+                <span class="text-text-primary font-medium">{{ selectedMedicine.concentrationMg || 'N/A' }}mg / {{ selectedMedicine.concentrationMl || 'N/A' }}ml</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-text-tertiary">Rango seguro:</span>
+                <span class="text-text-primary font-medium">{{ selectedMedicine.minSafeMl || 'N/A' }} - {{ selectedMedicine.maxSafeMl || 'N/A' }} ml</span>
+              </div>
+            </div>
+
+            <div *ngIf="selectedMedicine.description" class="mt-3 pt-3 border-t border-dark-border/50">
+              <p class="text-sm text-text-secondary">
+                <svg class="w-4 h-4 inline mr-1 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ selectedMedicine.description }}
+              </p>
+            </div>
+          </div>
+
           <!-- Weight Input -->
           <div>
             <label class="block text-sm font-medium text-text-secondary mb-2">
@@ -121,6 +138,70 @@
                class="error-message">
               El peso no puede exceder 2 caracteres
             </p>
+          </div>
+
+          <!-- Custom Concentration Section -->
+          <div class="bg-dark-elevated/50 border border-dark-border rounded-lg p-4">
+            <div class="flex items-center mb-3">
+              <svg class="w-4 h-4 mr-2 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"></path>
+              </svg>
+              <h3 class="text-sm font-medium text-text-primary">Concentración Personalizada (Opcional)</h3>
+            </div>
+            <p class="text-xs text-text-tertiary mb-4">
+              Si deseas usar una concentración diferente a la del medicamento seleccionado, ingresa solo el valor en mg. El volumen se tomará del medicamento.
+            </p>
+            
+            <div class="grid grid-cols-1 gap-4">
+              <!-- Custom Concentration Mg -->
+              <div>
+                <label class="block text-xs font-medium text-text-secondary mb-1">
+                  Concentración (mg)
+                </label>
+                <input 
+                  type="number" 
+                  formControlName="userConcentrationMg" 
+                  step="0.01"
+                  min="0.1"
+                  maxlength="5"
+                  (input)="limitInput('userConcentrationMg', 5)"
+                  class="modern-input text-sm"
+                  placeholder="Ej: 400"
+                />
+                <p *ngIf="f['userConcentrationMg'].errors?.['maxlength'] && f['userConcentrationMg'].touched" 
+                   class="error-message">
+                  La concentración en mg no puede exceder 5 caracteres
+                </p>
+              </div>
+
+              <!-- Custom Concentration Ml -->
+              <div>
+                <label class="block text-xs font-medium text-text-secondary mb-1">
+                  Concentración (ml)
+                </label>
+                <input 
+                  type="number" 
+                  formControlName="userConcentrationMl" 
+                  step="0.01"
+                  min="0.1"
+                  maxlength="5"
+                  (input)="limitInput('userConcentrationMl', 5)"
+                  class="modern-input text-sm"
+                  placeholder="Ej: 5"
+                />
+                <p *ngIf="f['userConcentrationMl'].errors?.['maxlength'] && f['userConcentrationMl'].touched" 
+                   class="error-message">
+                  La concentración en ml no puede exceder 5 caracteres
+                </p>
+              </div>
+            </div>
+            
+            <div class="mt-3 p-2 bg-accent-primary/10 border border-accent-primary/20 rounded text-xs text-text-secondary">
+              <svg class="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              Si no se especifica ninguno, se usará la concentración completa del medicamento seleccionado. Si especificas ambos valores, se usará tu concentración personalizada completa.
+            </div>
           </div>
 
           <!-- Calculate Button -->
@@ -268,7 +349,19 @@
             </div>
             <div>
               <span class="text-text-tertiary">Concentración:</span>
-              <span class="text-text-primary font-medium ml-2">{{ doseResult.medicine.concentrationMg || 'N/A' }}mg / {{ doseResult.medicine.concentrationMl || 'N/A' }}ml</span>
+              <span class="text-text-primary font-medium ml-2">
+                <span *ngIf="formValue?.userConcentrationMg && formValue?.userConcentrationMl">
+                  {{ formValue.userConcentrationMg }}mg / {{ formValue.userConcentrationMl }}ml 
+                  <span class="text-accent-primary text-xs">(completamente personalizada)</span>
+                </span>
+                <span *ngIf="formValue?.userConcentrationMg && !formValue?.userConcentrationMl">
+                  {{ formValue.userConcentrationMg }}mg / {{ doseResult.medicine.concentrationMl || 'N/A' }}ml 
+                  <span class="text-accent-primary text-xs">(mg personalizado)</span>
+                </span>
+                <span *ngIf="!formValue?.userConcentrationMg && !formValue?.userConcentrationMl">
+                  {{ doseResult.medicine.concentrationMg || 'N/A' }}mg / {{ doseResult.medicine.concentrationMl || 'N/A' }}ml
+                </span>
+              </span>
             </div>
             <div>
               <span class="text-text-tertiary">Rango seguro (ml):</span>
@@ -297,31 +390,8 @@
             </div>
           </div>
 
-          <div *ngIf="aiLoading" class="flex items-center justify-center py-8">
-            <div class="text-center">
-              <div class="animate-spin rounded-full h-4 w-4 border-2 border-accent-primary border-t-transparent mb-3"></div>
-              <p class="text-sm text-text-secondary">Generando consejos médicos...</p>
-            </div>
-          </div>
-
-          <!-- AI Error State -->
-          <div *ngIf="aiError && !aiLoading" class="bg-accent-danger/10 border border-accent-danger/20 rounded-lg p-4">
-            <div class="flex items-start">
-              <svg class="w-5 h-5 text-accent-danger mt-0.5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-              </svg>
-              <div>
-                <p class="text-sm font-medium text-accent-danger">Error al generar consejos</p>
-                <p class="text-sm text-text-secondary mt-1">{{ aiError }}</p>
-                <button (click)="generateAiAdvice(doseResult!)" class="mt-2 text-sm text-accent-primary hover:text-accent-primary/80 underline">
-                  Reintentar
-                </button>
-              </div>
-            </div>
-          </div>
-
           <!-- AI Advice Content -->
-          <div *ngIf="aiAdvice && !aiLoading && !aiError" class="space-y-4">
+          <div *ngIf="aiAdvice" class="space-y-4">
             <!-- Main Advice -->
             <div *ngIf="aiAdvice.advice" class="bg-dark-elevated border border-dark-border rounded-lg p-4">
               <h5 class="text-sm font-medium text-text-primary mb-2 flex items-center">
@@ -374,6 +444,14 @@
                 Estos consejos son informativos y no reemplazan la consulta con un profesional de la salud.
               </p>
             </div>
+          </div>
+
+          <!-- No AI Advice Available -->
+          <div *ngIf="!aiAdvice" class="text-center py-8">
+            <svg class="w-8 h-8 text-text-tertiary mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+            </svg>
+            <p class="text-sm text-text-tertiary">Los consejos médicos estarán disponibles en breve...</p>
           </div>
         </div>
       </div>

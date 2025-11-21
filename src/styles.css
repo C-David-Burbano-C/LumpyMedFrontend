@@ -7,17 +7,23 @@
     @apply border-dark-border;
   }
 
-  html, body {
-    @apply h-full m-0 p-0 text-text-primary;
+  html {
+    @apply m-0 p-0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply overflow-x-hidden;
-    background: transparent;
+    @apply min-h-screen m-0 p-0 text-text-primary overflow-x-hidden;
   }
+
+  /* Ensure backgrounds are applied on all screen sizes */
+  .bg-dark-bg { background-color: #0a0a0a !important; }
+  .bg-dark-surface { background-color: #111111 !important; }
+  .bg-dark-elevated { background-color: #1a1a1a !important; }
+  .bg-dark-border { background-color: #262626 !important; }
+  .bg-dark-hover { background-color: #1f1f1f !important; }
 }
 
 @layer components {
@@ -77,9 +83,12 @@
     @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-primary via-accent-purple to-accent-secondary;
   }
 
-  /* Glass Effect */
+  /* Glass Effect - ensure consistent background */
   .glass-effect {
-    @apply bg-dark-surface/50 backdrop-blur-xl border border-dark-border/50;
+    background: rgba(17, 17, 17, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(38, 38, 38, 0.5) !important;
   }
 
   /* Shimmer Effect */

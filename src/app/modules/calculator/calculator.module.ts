@@ -12,6 +12,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 
 import { CalculatorComponent } from './calculator.component';
+import { MobileSidebarComponent } from '../../shared/mobile-sidebar/mobile-sidebar.component';
 
 const routes: Routes = [
   { path: '', component: CalculatorComponent }
@@ -32,7 +33,8 @@ const routes: Routes = [
     MatAutocompleteModule,
     MatToolbarModule,
     MatIconModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    MobileSidebarComponent
   ]
 })
 export class CalculatorModule { }

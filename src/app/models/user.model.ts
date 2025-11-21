@@ -29,7 +29,7 @@ export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
-  role?: 'USER' | 'ADMIN';
+  rol?: 'USER' | 'ADMIN';
 }
 
 export interface AuthResponse {

@@ -1,0 +1,189 @@
+<div class="min-h-screen bg-dark-bg/70">
+  <!-- Mobile Sidebar -->
+  <app-mobile-sidebar
+    [isOpen]="isSidebarOpen"
+    [isAdmin]="isAdmin"
+    (closeSidebar)="closeSidebar()"
+    (logout)="onSidebarLogout()"
+    (hoverChange)="onSidebarHoverChange($event)">
+  </app-mobile-sidebar>
+
+  <!-- Main Content -->
+  <main class="modern-container py-8 transition-all duration-300"
+        [ngClass]="{
+          'md:pl-16': !isSidebarHovered,
+          'md:pl-64': isSidebarHovered
+        }">
+    <div class="max-w-6xl mx-auto">
+      <!-- History Header -->
+      <div class="modern-card animate-fade-in mb-6">
+        <div class="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+          <div class="flex items-center space-x-3 flex-1 min-w-0">
+            <div class="p-3 bg-gradient-to-br from-accent-purple to-accent-primary rounded-xl flex-shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div class="min-w-0 flex-1">
+              <h2 class="text-xl sm:text-2xl font-bold text-text-primary truncate">Historial de Consultas</h2>
+              <p class="text-xs sm:text-sm text-text-secondary truncate">Revisa todos los cálculos realizados anteriormente</p>
+            </div>
+          </div>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full md:w-auto">
+            <button
+              (click)="exportToExcel()"
+              class="modern-btn-primary text-sm px-3 py-2 sm:px-4 w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center"
+              *ngIf="doseHistory.length > 0 && !loading">
+              <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7v4m0 0l-3-3m3 3l3-3"></path>
+              </svg>
+              <span>Descargar Excel</span>
+            </button>
+            <button
+              (click)="showHistoryInfo()"
+              class="modern-btn-secondary text-sm px-3 py-2 sm:px-4 w-full sm:w-auto flex-shrink-0"
+              *ngIf="doseHistory.length > 0">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="hidden xs:inline">Información</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- History Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" *ngIf="doseHistory.length > 0 && !loading">
+        <div class="modern-card text-center">
+          <div class="text-3xl font-bold gradient-text">{{ doseHistory.length }}</div>
+          <div class="text-sm text-text-tertiary">Consultas Totales</div>
+        </div>
+        <div class="modern-card text-center">
+          <div class="text-3xl font-bold text-accent-success">{{ getSafeConsultationsCount() }}</div>
+          <div class="text-sm text-text-tertiary">Consultas Seguras</div>
+        </div>
+        <div class="modern-card text-center">
+          <div class="text-3xl font-bold text-accent-warning">{{ getAlertConsultationsCount() }}</div>
+          <div class="text-sm text-text-tertiary">Consultas con Alerta</div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="modern-card text-center py-16">
+        <div class="animate-spin rounded-full h-12 w-12 border-4 border-accent-primary border-t-transparent mx-auto mb-4"></div>
+        <h3 class="text-lg font-medium text-text-primary mb-2">Cargando historial...</h3>
+        <p class="text-sm text-text-tertiary">Obteniendo consultas del servidor</p>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="errorMessage && !loading" class="modern-card text-center py-16">
+        <svg class="w-16 h-16 text-accent-danger mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h3 class="text-lg font-medium text-text-primary mb-2">Error al cargar historial</h3>
+        <p class="text-sm text-text-tertiary mb-6">{{ errorMessage }}</p>
+        <button (click)="retry()" class="modern-btn-primary">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+          </svg>
+          Reintentar
+        </button>
+      </div>
+
+      <!-- History List -->
+      <div class="space-y-4" *ngIf="doseHistory.length > 0 && !loading && !errorMessage">
+        <div *ngFor="let item of doseHistory; trackBy: trackByHistoryId"
+             class="modern-card hover:shadow-lg transition-shadow animate-fade-in">
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center space-x-3">
+              <div class="p-2 rounded-lg" 
+                   [ngClass]="{
+                     'bg-accent-success/10': item.alert.toLowerCase().includes('dentro'),
+                     'bg-accent-warning/10': !item.alert.toLowerCase().includes('dentro')
+                   }">
+                <svg class="w-5 h-5" 
+                     [ngClass]="{
+                       'text-accent-success': item.alert.toLowerCase().includes('dentro'),
+                       'text-accent-warning': !item.alert.toLowerCase().includes('dentro')
+                     }"
+                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h4 class="font-medium text-text-primary">{{ item.medicine }}</h4>
+                <p class="text-sm text-text-tertiary">
+                  {{ item.weightKg }} kg • {{ item.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                </p>
+              </div>
+            </div>
+          </div>          <!-- Alert Message -->
+          <div class="mb-4 p-4 rounded-lg border"
+               [ngClass]="{
+                 'bg-accent-success/10 border-accent-success': item.alert.toLowerCase().includes('dentro'),
+                 'bg-accent-warning/10 border-accent-warning': !item.alert.toLowerCase().includes('dentro')
+               }">
+            <div class="flex items-center">
+              <svg class="w-5 h-5 mr-2 flex-shrink-0"
+                   [ngClass]="{
+                     'text-accent-success': item.alert.toLowerCase().includes('dentro'),
+                     'text-accent-warning': !item.alert.toLowerCase().includes('dentro')
+                   }"
+                   fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="text-sm">{{ item.alert }}</span>
+            </div>
+          </div>
+
+          <!-- Dose Details -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-dark-elevated border border-dark-border rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-accent-primary">{{ item.mgPerDay | number:'1.1-1' }}</div>
+              <div class="text-xs text-text-tertiary">mg/día</div>
+            </div>
+            <div class="bg-dark-elevated border border-dark-border rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-accent-purple">{{ item.dosesPerDay }}</div>
+              <div class="text-xs text-text-tertiary">dosis/día</div>
+            </div>
+            <div class="bg-dark-elevated border border-dark-border rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-accent-success">{{ item.mgPerDose | number:'1.1-1' }}</div>
+              <div class="text-xs text-text-tertiary">mg/toma</div>
+            </div>
+            <div class="bg-dark-elevated border border-accent-warning rounded-lg p-4 text-center">
+              <div class="text-2xl font-bold text-accent-warning">{{ item.mlPerDose | number:'1.1-1' }}</div>
+              <div class="text-xs text-text-tertiary">ml/toma</div>
+            </div>
+          </div>
+
+          <!-- Safe Range -->
+          <div class="mt-4 pt-4 border-t border-dark-border/50">
+            <div class="text-sm text-text-tertiary">
+              <span class="font-medium">Rango seguro:</span> {{ item.safeRange }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty History State -->
+      <div *ngIf="doseHistory.length === 0 && !loading" class="modern-card text-center py-20 px-8">
+        <div class="max-w-md mx-auto">
+          <svg class="w-24 h-24 text-text-tertiary mx-auto mb-8 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <h3 class="text-2xl font-semibold text-text-primary mb-4">No hay consultas registradas</h3>
+          <p class="text-base text-text-secondary mb-8 leading-relaxed">
+            Las consultas realizadas en la calculadora aparecerán aquí para referencia futura
+          </p>
+          <a routerLink="/calculator" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-accent-primary to-accent-purple text-white font-medium rounded-xl hover:shadow-lg transition-all duration-200 transform hover:scale-105">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+            Ir a Calculadora
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

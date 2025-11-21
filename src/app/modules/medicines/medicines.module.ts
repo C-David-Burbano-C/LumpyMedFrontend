@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { MedicinesListComponent } from './medicines-list/medicines-list.component';
 import { MedicineFormComponent } from './medicine-form/medicine-form.component';
+import { MobileSidebarComponent } from '../../shared/mobile-sidebar/mobile-sidebar.component';
 
 const routes: Routes = [
   { path: '', component: MedicinesListComponent }
@@ -38,7 +39,8 @@ const routes: Routes = [
     MatDialogModule,
     MatToolbarModule,
     MatTooltipModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    MobileSidebarComponent
   ]
 })
 export class MedicinesModule { }

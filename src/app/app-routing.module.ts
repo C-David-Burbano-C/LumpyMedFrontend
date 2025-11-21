@@ -29,6 +29,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'history',
+    loadChildren: () => import('./modules/history/history.module').then(m => m.HistoryModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: '**',
     redirectTo: '/login'
   }

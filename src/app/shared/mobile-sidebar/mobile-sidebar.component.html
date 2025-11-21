@@ -1,0 +1,172 @@
+<!-- BOTÓN HAMBURGUESA (solo móvil) -->
+<button 
+  class="md:hidden fixed top-4 left-4 z-50 p-2 bg-dark-bg/90 border border-dark-border rounded-lg shadow-lg"
+  (click)="onToggleMobile()">
+  <svg class="w-6 h-6 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+          d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+</button>
+
+
+<!-- SIDEBAR MÓVIL (solo se muestra en pantallas pequeñas) -->
+<div 
+  class="md:hidden fixed top-0 left-0 h-full w-64 bg-dark-bg/95 backdrop-blur border-r border-dark-border 
+         shadow-xl z-50 transform transition-transform duration-300"
+  [ngClass]="{ '-translate-x-full': !isMobileOpen, 'translate-x-0': isMobileOpen }">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between p-4 border-b border-dark-border">
+    <div class="flex items-center space-x-3">
+      <div class="p-2 bg-accent-primary/10 rounded-lg">
+        <img src="assets/logo.svg" class="w-6 h-6" />
+      </div>
+      <div>
+        <h2 class="text-lg font-bold text-text-primary">LumpyMed</h2>
+        <p class="text-xs text-text-tertiary">Navegación</p>
+      </div>
+    </div>
+
+    <button (click)="onToggleMobile()" class="p-2 hover:bg-dark-hover rounded-lg">
+      <svg class="w-6 h-6 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Menu -->
+  <nav class="p-4">
+    <ul class="space-y-2">
+      <li *ngFor="let item of menuItems">
+        <a 
+          [routerLink]="item.route"
+          (click)="onNavigateMobile()"
+          class="flex items-center space-x-4 px-4 py-3 rounded-lg text-text-secondary 
+                 hover:bg-dark-hover hover:text-text-primary transition">
+
+          <!-- SVG móvil corregido -->
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon"></path>
+          </svg>
+
+          <span>{{ item.label }}</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Logout -->
+    <button 
+      (click)="onLogout()" 
+      class="w-full flex items-center space-x-4 px-4 py-3 mt-6 border-t border-dark-border text-accent-danger">
+
+      <!-- SVG logout móvil corregido -->
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+      </svg>
+
+      <span>Cerrar Sesión</span>
+    </button>
+  </nav>
+</div>
+
+<!-- Overlay móvil -->
+<div 
+  *ngIf="isMobileOpen"
+  class="md:hidden fixed inset-0 bg-black/50 z-40"
+  (click)="onToggleMobile()">
+</div>
+
+
+
+<!-- ============================================================ -->
+<!--            SIDEBAR DESKTOP (TU SIDEBAR ORIGINAL)             -->
+<!-- ============================================================ -->
+
+<div class="hidden md:block">
+  <!-- Sidebar izquierdo -->
+  <div class="fixed top-0 left-0 h-full z-50 transition-all duration-300 ease-in-out"
+      [ngClass]="{
+        'md:w-16': !isExpanded,
+        'md:w-64': isExpanded,
+        'w-64': isOpen,
+        'w-0': !isOpen
+      }"
+      (mouseenter)="onMouseEnter()"
+      (mouseleave)="onMouseLeave()">
+
+    <!-- Sidebar Content -->
+    <div class="h-full bg-dark-bg/90 backdrop-blur-sm border-r border-dark-border shadow-xl flex flex-col">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between p-4 border-b border-dark-border flex-shrink-0">
+        <div class="flex items-center space-x-3 overflow-hidden">
+          <div class="p-2 bg-accent-primary/10 rounded-lg flex-shrink-0">
+            <img src="assets/logo.svg" alt="Logo" class="w-6 h-6">
+          </div>
+          <div class="transition-opacity duration-300 md:opacity-0"
+               [ngClass]="{'md:opacity-100': isExpanded, 'opacity-100': isOpen}">
+            <h2 class="text-lg font-bold text-text-primary whitespace-nowrap">LumpyMed</h2>
+            <p class="text-xs text-text-tertiary">Navegación</p>
+          </div>
+        </div>
+
+        <!-- Botón cerrar móvil (no se ve porque md:block) -->
+        <button (click)="onClose()"
+                class="md:hidden p-2 hover:bg-dark-hover rounded-lg transition-colors flex-shrink-0">
+          <svg class="w-5 h-5 text-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Menu Desktop -->
+      <nav class="flex-1 px-4 py-6 overflow-hidden">
+        <ul class="space-y-2">
+          <li *ngFor="let item of menuItems" class="group">
+            <a [routerLink]="item.route"
+                routerLinkActive="bg-accent-primary/10 text-accent-primary border-r-2 border-accent-primary"
+                class="flex items-center px-4 py-3 text-text-secondary hover:bg-dark-hover hover:text-text-primary rounded-lg transition-all duration-200 relative"
+                [ngClass]="{
+                  'justify-center': !isExpanded && !isOpen,
+                  'space-x-3': isExpanded || isOpen
+                }"
+                (click)="onNavigate()">
+
+              <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="item.icon"></path>
+              </svg>
+
+              <span class="transition-opacity duration-300 md:opacity-0 whitespace-nowrap overflow-hidden"
+                    [ngClass]="{'md:opacity-100': isExpanded, 'opacity-100': isOpen}">
+                {{ item.label }}
+              </span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- Logout -->
+        <div class="mt-8 pt-6 border-t border-dark-border">
+          <button (click)="onLogout()"
+                  class="flex items-center w-full px-4 py-3 text-accent-danger hover:bg-accent-danger/10 rounded-lg transition-all duration-200"
+                  [ngClass]="{
+                    'justify-center': !isExpanded && !isOpen,
+                    'space-x-3': isExpanded || isOpen
+                  }">
+
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+
+            <span class="transition-opacity duration-300 md:opacity-0 whitespace-nowrap overflow-hidden"
+                  [ngClass]="{'md:opacity-100': isExpanded, 'opacity-100': isOpen}">
+              Cerrar Sesión
+            </span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>

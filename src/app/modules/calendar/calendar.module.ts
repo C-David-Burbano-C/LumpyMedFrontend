@@ -23,7 +23,6 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 
 @NgModule({
   declarations: [
-    CalendarComponent
   ],
   imports: [
     CommonModule,
@@ -45,7 +44,8 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     MatTooltipModule,
     FullCalendarModule,
     EventFormComponent,
-    EventDetailsDialogComponent
+    EventDetailsDialogComponent,
+    CalendarComponent
   ]
 })
 export class CalendarModule { }
